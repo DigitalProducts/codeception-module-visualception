@@ -118,7 +118,7 @@ class VisualCeption extends \Codeception\Module
         $debugDir = \Codeception\Configuration::logDir() . 'debug/tmp/';
         if (! is_dir($debugDir)) {
             $this->debug("Creating directory: $debugDir");
-            mkdir($debugDir, 0666, true);
+            mkdir($debugDir, 0777, true);
         }
         return $debugDir . $this->getScreenshotName($identifier);
     }
