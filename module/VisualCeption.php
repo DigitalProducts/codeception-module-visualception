@@ -241,8 +241,6 @@ class VisualCeption extends \Codeception\Module
         $result = $imagick1->compareImages($imagick2, \Imagick::METRIC_MEANSQUAREERROR);
         $result[0]->setImageFormat("png");
 
-        $this->debug($result);
-
         return $result;
     }
 }
