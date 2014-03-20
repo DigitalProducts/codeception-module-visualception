@@ -62,7 +62,7 @@ class VisualCeption extends \Codeception\Module
 
         if (! is_dir($this->referenceImageDir)) {
             $this->debug("Creating directory: $this->referenceImageDir");
-            mkdir($this->referenceImageDir, 0666, true);
+            mkdir($this->referenceImageDir, 0777, true);
         }
     }
 
@@ -218,6 +218,7 @@ class VisualCeption extends \Codeception\Module
         $expectedImagePath = $this->getExpectedScreenshotPath($identifier);
 
         if (! file_exists($expectedImagePath)) {
+            $this->debug("Copying image (from $currentImagePath to $expectedImagePath");
             copy($currentImagePath, $expectedImagePath);
             return array (null, 0);
         } else {
