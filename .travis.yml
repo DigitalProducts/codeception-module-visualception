@@ -11,4 +11,4 @@ before_script:
   - cd test/integration/
 
 
-script: php codecept.phar run
+script: php codecept.phar run -d
