@@ -24,4 +24,3 @@ modules:
                 webStorageEnabled: true
         VisualCeption:
             maximumDeviation: 0
-            referenceImageDir: /tmp/deviation/

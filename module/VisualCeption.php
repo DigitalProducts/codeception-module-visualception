@@ -7,6 +7,10 @@ namespace Codeception\Module;
  * @copyright Copyright (c) 2014 G+J Digital Products GmbH
  * @license MIT license, http://www.opensource.org/licenses/mit-license.php
  * @package Codeception\Module
+ *
+ * @author Nils Langner <langner.nils@guj.de>
+ * @author Torsten Franz
+ * @author Sebastian Neubert
  */
 class VisualCeption extends \Codeception\Module
 {
@@ -53,11 +57,11 @@ class VisualCeption extends \Codeception\Module
         if (array_key_exists('referenceImageDir', $this->config)) {
             $this->referenceImageDir = $this->config["referenceImageDir"];
         } else {
-            throw new \RuntimeException("Reference image dir was not set, but is mandatory.");
+            $this->referenceImageDir = \Codeception\Configuration::dataDir() . 'VisualCeption/';
         }
 
         if (! is_dir($this->referenceImageDir)) {
-            mkdir($this->referenceImageDir, 0666);
+            mkdir($this->referenceImageDir, 0666, true);
         }
     }
 
