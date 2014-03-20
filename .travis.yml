@@ -9,6 +9,6 @@ before_script:
   - wget http://selenium.googlecode.com/files/selenium-server-standalone-2.35.0.jar
   - java -jar selenium-server-standalone-2.35.0.jar -port 4444 &
   - cd test/integration/
-  
 
-script: php -d include_path="." codecept.phar run
+
+script: php codecept.phar run
