@@ -171,7 +171,7 @@ class VisualCeption extends \Codeception\Module
      * and their element ID
      *
      * @param string $identifier identifies your test object
-     * @param null $elementID DOM ID of the element, which should be screenshotted
+     * @param string $elementID DOM ID of the element, which should be screenshotted
      */
     public function compareScreenshot ($identifier, $elementID = null)
     {
@@ -181,8 +181,6 @@ class VisualCeption extends \Codeception\Module
         $compareResult = $this->compare($identifier);
 
         unlink($this->getScreenshotPath($identifier));
-
-        $this->debug($compareResult);
 
         $deviation = round($compareResult[1] * 100, 2);
 
