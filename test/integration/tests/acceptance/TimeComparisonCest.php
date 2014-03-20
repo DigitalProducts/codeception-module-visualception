@@ -9,9 +9,10 @@ class TimeComparisonCest
     public function compareTimeString (WebGuy $I, $scenario)
     {
         $I->amOnPage("/VisualCeption/time.php");
+        $I->compareScreenshot("the-time", "#thetime");
 
         // the test has to be called twice for comparison on the travis server
-        $I->compareScreenshot("the-time", "#thetime");
+        $I->amOnPage("/VisualCeption/time.php");
         $I->compareScreenshot("the-time", "#thetime");
     }
 }
