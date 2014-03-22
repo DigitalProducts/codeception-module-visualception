@@ -1,6 +1,8 @@
 # VisualCeption
 Visual regression tests integrated in Codeception.
 
+
+
 ## Requirements
 
 VisualCeption needs the following components to run:
@@ -20,7 +22,7 @@ Add the module to <code>_bootstrap.php</code>.
 
 To use the VisualCeption module you have to configure it. 
 
-** Example Configuration **
+**Example Configuration**
 ```yaml
 modules:
     enabled: [WebDriver, VisualCeption]
@@ -34,6 +36,8 @@ VisualCeption:
 * **maximumDeviation** When comparing two images the deviation will be calculated. If this deviation is greater than the maximum deviation the test will fail. 
 
 ## Usage
+
+VisualCeption is really easy to use. There is only one method that will be added to your WebGuy <code>compareScreenshot</code>. This will be used to name the screenshot and identify the elements that has to be screenshot.  
 
 ```php
 $I->compareScreenshot( "uniqueIdentifier", "elementId" );
