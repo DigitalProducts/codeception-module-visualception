@@ -1,5 +1,5 @@
 # VisualCeption
-Visual regressions tests integrated in Codeception.
+Visual regression tests integrated in Codeception.
 
 ## Requirements
 
