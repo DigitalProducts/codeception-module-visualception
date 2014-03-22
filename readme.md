@@ -1,7 +1,12 @@
 # VisualCeption
 Visual regression tests integrated in Codeception.
 
-
+## Documenation todo
+* run twice
+* phantom css
+* example image
+* license
+* how it works
 
 ## Requirements
 
