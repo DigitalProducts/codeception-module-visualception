@@ -6,7 +6,7 @@ Visual regression tests integrated in Codeception.
 VisualCeption needs the following components to run:
 
 * *Codeception* VisualCeption is a module for Codeception. It will need a running version of this tool.
-* *Imagick* For comparing two images VisualCeption is using the imagick library for php.
+* *Imagick* For comparing two images VisualCeption is using the imagick library for php. For more information visit [php.net](http://www.php.net/manual/de/book.imagick.php) or the [installation guide](http://www.php.net/manual/en/imagick.setup.php).
 * *WebDriver module* This tool does only work with webdriver at the moment.
 
 ## Installation
