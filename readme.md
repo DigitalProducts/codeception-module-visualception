@@ -11,7 +11,41 @@ VisualCeption needs the following components to run:
 
 ## Installation
 
+### Bootstrap
+Add the module to <code>_bootstrap.php</code>. 
+
+<code>include_once "/path/to/module/VisualCeption.php";</code>
+
+### Configuration
+
+To use the VisualCeption module you have to configure it. 
+
+** Example Configuration **
+```yaml
+modules:
+    enabled: [WebDriver, VisualCeption]
+    
+VisualCeption:
+    referenceImageDir: /home/codeception/referenceImages/ # Path to the reference
+    maximumDeviation: 5                                   # deviation in percent
+```
+
+* **referenceImageDir** VisualCeption uses an "old" image for calculating the deviation. These images have to be stored in the system. This is the corresponding directory.
+* **maximumDeviation** When comparing two images the deviation will be calculated. If this deviation is greater than the maximum deviation the test will fail. 
+
 ## Usage
+
+```php
+$I->compareScreenshot( "uniqueIdentifier", "elementId" );
+```
+
+* **uniqueIdentifier** For comparing the images it is important to have a stable name. This is the corresponding name.
+* **elementId** It is possible to only compare a special div container. The element id can be passed. *You can use all locators that can be used in jQuery*. 
+
+**Example Usage**
+```php
+$I->compareScreenshot( "subNavigation", "#subNav" );
+```
 
 ## Restriction
 
