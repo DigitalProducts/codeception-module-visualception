@@ -1,4 +1,5 @@
 <?php
+
 namespace Codeception\Module;
 
 class VisualCeption extends \Codeception\Module
@@ -33,7 +34,7 @@ class VisualCeption extends \Codeception\Module
         }
 
         if (! is_dir($this->referenceImageDir)) {
-            mkdir($this->referenceImageDir, 0777);
+            mkdir($this->referenceImageDir, 0666);
         }
     }
 
@@ -43,11 +44,16 @@ class VisualCeption extends \Codeception\Module
         if (is_null($elementId)) {
             $elementId = 'body';
         }
-        $imageCoords = array();
-        $imageCoords['offset_x'] = (string) $webDriver->executeScript('var element = $( "' . $elementId . '" );var offset = element.offset();return offset.left;');
-        $imageCoords['offset_y'] = (string) $webDriver->executeScript('var element = $( "' . $elementId . '" );var offset = element.offset();return offset.top;');
-        $imageCoords['width'] = (string) $webDriver->executeScript('var element = $( "' . $elementId . '" );return element.width();');
-        $imageCoords['height'] = (string) $webDriver->executeScript('var element = $( "' . $elementId . '" );return element.height();');
+
+        $jQueryString = file_get_contents(__DIR__."/jquery.js");
+        $webDriver->executeScript($jQueryString);
+        $webDriver->executeScript('jQuery.noConflict();');
+
+        $imageCoords = array ();
+        $imageCoords['offset_x'] = (string) $webDriver->executeScript('var element = jQuery( "' . $elementId . '" );var offset = element.offset();return offset.left;');
+        $imageCoords['offset_y'] = (string) $webDriver->executeScript('var element = jQuery( "' . $elementId . '" );var offset = element.offset();return offset.top;');
+        $imageCoords['width'] = (string) $webDriver->executeScript('var element = jQuery( "' . $elementId . '" );return element.width();');
+        $imageCoords['height'] = (string) $webDriver->executeScript('var element = jQuery( "' . $elementId . '" );return element.height();');
 
         return $imageCoords;
     }
@@ -55,14 +61,14 @@ class VisualCeption extends \Codeception\Module
     private function getScreenshotName ($identifier)
     {
         $caseName = str_replace('Cept.php', '', $this->test->getFileName());
-        return $caseName . $identifier . "-element.png";
+        return $caseName . '.' . $identifier . '.png';
     }
 
     private function getScreenshotPath ($identifier)
     {
         $debugDir = \Codeception\Configuration::logDir() . 'debug/tmp/';
         if (! is_dir($debugDir)) {
-            mkdir($debugDir, 0777);
+            mkdir($debugDir, 0666);
         }
         return $debugDir . $this->getScreenshotName($identifier);
     }
@@ -103,10 +109,12 @@ class VisualCeption extends \Codeception\Module
 
         $this->debug($compareResult);
 
-        if ($compareResult[1] > $this->maximumDeviation) {
+        $deviation = round($compareResult[1] * 100, 2);
+
+        if ($deviation > $this->maximumDeviation) {
             $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
             $compareResult[0]->writeImage($compareScreenshotPath);
-            $this->assertTrue(false, "The deviation of the taken screenshot is too high. See $compareScreenshotPath for a deviation screenshot.");
+            $this->assertTrue(false, "The deviation of the taken screenshot is too high (".$deviation."%).\nSee $compareScreenshotPath for a deviation screenshot.");
         }
     }
 
@@ -123,7 +131,7 @@ class VisualCeption extends \Codeception\Module
 
         if (! file_exists($expectedImagePath)) {
             copy($currentImagePath, $expectedImagePath);
-            return array(null,0);
+            return array (null, 0);
         } else {
             return $this->compareImages($expectedImagePath, $currentImagePath);
         }
