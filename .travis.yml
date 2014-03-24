@@ -7,7 +7,7 @@ php:
 before_script:
   - printf "\n" | pecl install imagick
   - wget http://selenium.googlecode.com/files/selenium-server-standalone-2.35.0.jar
-  - java -jar selenium-server-standalone-2.35.0.jar -port 4444 > /dev/null &
+  - java -jar selenium-server-standalone-2.35.0.jar -port 4444 &
   - cd test/integration/
   
 
