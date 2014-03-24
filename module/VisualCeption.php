@@ -82,7 +82,6 @@ class VisualCeption extends \Codeception\Module
 
         $webDriver->takeScreenshot($screenshotPath);
 
-        // # $screenshotImage = imagecreatefrompng($screenshotPath);
         $screenShotImage = new \Imagick();
         $screenShotImage->readImage( $screenshotPath );
         $screenShotImage->cropImage( $coords['width'], $coords['height'], $coords['offset_x'], $coords['offset_y'] );
