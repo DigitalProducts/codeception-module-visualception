@@ -4,6 +4,7 @@ Visual regression tests integrated in [Codeception](http://codeception.com/).
 This module can be used to compare the current representation of a website element with an expeted. It was written on the shoulders of codeception and integrates in a very easy way.
 
 **Example**
+
 ![](http://www.thewebhatesme.com/VisualCeption/compare.png)
 
 ## How it works
