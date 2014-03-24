@@ -19,7 +19,7 @@ modules:
             url: http://www.thewebhatesme.com
             browser: chrome
             wait: 2
-            host: 192.168.70.1
+            host: localhost
             port: 4444
             capabilities:
                 webStorageEnabled: true
