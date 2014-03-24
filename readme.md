@@ -9,7 +9,7 @@ This module can be used to compare the current representation of a website eleme
 
 ## How it works
 
-VisualCeption uses a combination of the "make a screenshot" feature in webdriver, imagick and jquery to compare visual elements on a website. This comparison is done in four steps:
+VisualCeption uses a combination of the "make a screenshot" feature in webdriver, imagick and jquery to compare visual elements on a website. This comparison is done in five steps:
 
 1. **Take a screenshot** of the full page using webdriver.
 2. **Calculate the position** and size of the selected element using jquery.
