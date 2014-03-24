@@ -5,6 +5,7 @@ php:
   - 5.5
 
 before_script:
+  - pecl install imagick
   - cd test/integration/
 
-script: php codecept.phar run
+script: php -d include_path="." codecept.phar run
