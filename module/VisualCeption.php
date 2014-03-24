@@ -1,4 +1,5 @@
 <?php
+
 namespace Codeception\Module;
 
 class VisualCeption extends \Codeception\Module
@@ -43,11 +44,16 @@ class VisualCeption extends \Codeception\Module
         if (is_null($elementId)) {
             $elementId = 'body';
         }
-        $imageCoords = array();
-        $imageCoords['offset_x'] = (string) $webDriver->executeScript('var element = $( "' . $elementId . '" );var offset = element.offset();return offset.left;');
-        $imageCoords['offset_y'] = (string) $webDriver->executeScript('var element = $( "' . $elementId . '" );var offset = element.offset();return offset.top;');
-        $imageCoords['width'] = (string) $webDriver->executeScript('var element = $( "' . $elementId . '" );return element.width();');
-        $imageCoords['height'] = (string) $webDriver->executeScript('var element = $( "' . $elementId . '" );return element.height();');
+
+        $jQueryString = file_get_contents(__DIR__."/jquery.js");
+        $webDriver->executeScript($jQueryString);
+        $webDriver->executeScript('jQuery.noConflict();');
+
+        $imageCoords = array ();
+        $imageCoords['offset_x'] = (string) $webDriver->executeScript('var element = jQuery( "' . $elementId . '" );var offset = element.offset();return offset.left;');
+        $imageCoords['offset_y'] = (string) $webDriver->executeScript('var element = jQuery( "' . $elementId . '" );var offset = element.offset();return offset.top;');
+        $imageCoords['width'] = (string) $webDriver->executeScript('var element = jQuery( "' . $elementId . '" );return element.width();');
+        $imageCoords['height'] = (string) $webDriver->executeScript('var element = jQuery( "' . $elementId . '" );return element.height();');
 
         return $imageCoords;
     }
@@ -83,12 +89,12 @@ class VisualCeption extends \Codeception\Module
         $webDriver->takeScreenshot($screenshotPath);
 
         $screenshotImage = imagecreatefrompng($screenshotPath);
-        $elementImage = \imagecreatetruecolor($coords['width'], $coords['height']);
+        $elementImage =\imagecreatetruecolor($coords['width'], $coords['height']);
 
-        list ($current_width, $current_height) = \getimagesize($screenshotPath);
+        list ($current_width, $current_height) =\getimagesize($screenshotPath);
         imagecopy($elementImage, $screenshotImage, 0, 0, $coords['offset_x'], $coords['offset_y'], $current_width, $current_height);
 
-        $result = \imagepng($elementImage, $elementPath, 0);
+        $result =\imagepng($elementImage, $elementPath, 0);
 
         unlink($screenshotPath);
 
@@ -126,7 +132,7 @@ class VisualCeption extends \Codeception\Module
 
         if (! file_exists($expectedImagePath)) {
             copy($currentImagePath, $expectedImagePath);
-            return array(null,0);
+            return array (null, 0);
         } else {
             return $this->compareImages($expectedImagePath, $currentImagePath);
         }
