@@ -3,6 +3,9 @@ Visual regression tests integrated in [Codeception](http://codeception.com/).
 
 This module can be used to compare the current representation of a website element with an expeted. It was written on the shoulders of codeception and integrates in a very easy way.
 
+**Example**
+![](http://www.thewebhatesme.com/VisualCeption/compare.png)
+
 ## How it works
 
 VisualCeption uses a combination of the "make a screenshot" feature in webdriver, imagick and jquery to compare visual elements on a website. This comparison is done in four steps:
