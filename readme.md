@@ -43,7 +43,7 @@ modules:
     
 VisualCeption:
     referenceImageDir: /home/codeception/referenceImages/ # Path to the reference folder (optional, standard is 
-                                                          # <datadir>/VisualCeption/
+                                                          # <datadir>/VisualCeption/)
     maximumDeviation: 5                                   # deviation in percent
 ```
 
