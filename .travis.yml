@@ -4,7 +4,7 @@ php:
   - 5.4
   - 5.5
 
-before-script:
+before_script:
   - cd test/integration/
 
 script: php codecept.phar run
