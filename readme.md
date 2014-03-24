@@ -58,4 +58,4 @@ $I->compareScreenshot( "subNavigation", "#subNav" );
 
 ## Restriction
 
-VisualCeption uses the WebDriver module for making the screenshots. As a consequence we are not able to take screenshots via google chrome as the crhomedriver does not allow full page screenshots.
+VisualCeption uses the WebDriver module for making the screenshots. As a consequence we are not able to take screenshots via google chrome as the chromedriver does not allow full page screenshots.
