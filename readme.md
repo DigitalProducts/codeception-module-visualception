@@ -33,7 +33,7 @@ modules:
     enabled: [WebDriver, VisualCeption]
     
 VisualCeption:
-    referenceImageDir: /home/codeception/referenceImages/ # Path to the reference
+    referenceImageDir: /home/codeception/referenceImages/ # Path to the reference folder
     maximumDeviation: 5                                   # deviation in percent
 ```
 
