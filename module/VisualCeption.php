@@ -72,7 +72,7 @@ class VisualCeption extends \Codeception\Module
         return $this->referenceImageDir . $this->getScreenshotName($identifier);
     }
 
-    private function createScreenshot ($identifier, $coords)
+    private function createScreenshot ($identifier, array $coords)
     {
         $webDriverModule = $this->getModule("WebDriver");
         $webDriver = $webDriverModule->webDriver;
@@ -82,13 +82,11 @@ class VisualCeption extends \Codeception\Module
 
         $webDriver->takeScreenshot($screenshotPath);
 
-        $screenshotImage = imagecreatefrompng($screenshotPath);
-        $elementImage = \imagecreatetruecolor($coords['width'], $coords['height']);
-
-        list ($current_width, $current_height) = \getimagesize($screenshotPath);
-        imagecopy($elementImage, $screenshotImage, 0, 0, $coords['offset_x'], $coords['offset_y'], $current_width, $current_height);
-
-        $result = \imagepng($elementImage, $elementPath, 0);
+        // # $screenshotImage = imagecreatefrompng($screenshotPath);
+        $screenShotImage = new \Imagick();
+        $screenShotImage->readImage( $screenshotPath );
+        $screenShotImage->cropImage( $coords['width'], $coords['height'], $coords['offset_x'], $coords['offset_y'] );
+        $screenShotImage->writeImage( $elementPath );
 
         unlink($screenshotPath);
 
