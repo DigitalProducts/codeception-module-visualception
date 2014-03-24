@@ -1,8 +1,7 @@
 language: php
 
 php:
-  - 5.3
   - 5.4
   - 5.5
 
-script: phantomjs testrunner.js
+script: tests/integration/codecept.phar --config=tests/integration/codeception.yml run tests/integration/
