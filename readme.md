@@ -1,5 +1,5 @@
 # VisualCeption
-Visual regression tests integrated in Codeception.
+Visual regression tests integrated in [Codeception](http://codeception.com/).
 
 ## Documenation todo
 * run twice
