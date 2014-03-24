@@ -17,10 +17,6 @@ VisualCeption uses a combination of the "make a screenshot" feature in webdriver
 4. **Compare the element** with an older version of the screenshot that has been proofed as valid using imagick. If no previous image exists the current image will be used fur future comparions. As an effect of this approach the test has to be **run twice** before it works.
 5. If the deviation is too high **throw an exception** that is caught by Codeception.
 
-## Documenation todo
-* phantom css
-* example image
-
 ## Requirements
 
 VisualCeption needs the following components to run:
