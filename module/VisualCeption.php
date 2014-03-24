@@ -2,6 +2,12 @@
 
 namespace Codeception\Module;
 
+/**
+ * Class VisualCeption
+ * @copyright Copyright (c) 2014 G+J Digital Products GmbH
+ * @license MIT license, http://www.opensource.org/licenses/mit-license.php
+ * @package Codeception\Module
+ */
 class VisualCeption extends \Codeception\Module
 {
 
@@ -9,6 +15,12 @@ class VisualCeption extends \Codeception\Module
 
     private $maximumDeviation = 0;
 
+    /**
+     * Create an object from VisualCeption Class
+     *
+     * @param array $config
+     * @return result
+     */
     public function __construct ($config)
     {
         $result = parent::__construct($config);
@@ -16,11 +28,22 @@ class VisualCeption extends \Codeception\Module
         return $result;
     }
 
+    /**
+     * Event hook before a test starts
+     *
+     * @param \Codeception\TestCase $test
+     */
     public function _before (\Codeception\TestCase $test)
     {
         $this->test = $test;
     }
 
+    /**
+     * Initialize the module and read the config. Throws a runtime exception, if the
+     * reference image dir is not set in the config
+     *
+     * @throws \RuntimeException
+     */
     private function init ()
     {
         if (array_key_exists('maximumDeviation', $this->config)) {
@@ -38,6 +61,13 @@ class VisualCeption extends \Codeception\Module
         }
     }
 
+    /**
+     * Find the position and proportion of a DOM element, specified by it's ID. The method inject the
+     * JQuery Framework and uses the "noConflict"-mode to get the width, height and offset params.
+     *
+     * @param $elementId DOM ID of the element, which should be screenshotted
+     * @return array coordinates of the element
+     */
     private function getCoordinates ($elementId)
     {
         $webDriver = $this->getModule("WebDriver")->webDriver;
@@ -58,12 +88,26 @@ class VisualCeption extends \Codeception\Module
         return $imageCoords;
     }
 
+    /**
+     * Generates a screenshot image filename
+     * it uses the testcase name and the given indentifier to generate a png image name
+     *
+     * @param string $identifier identifies your test object
+     * @return string Name of the image file
+     */
     private function getScreenshotName ($identifier)
     {
         $caseName = str_replace('Cept.php', '', $this->test->getFileName());
         return $caseName . '.' . $identifier . '.png';
     }
 
+    /**
+     * Returns the temporary path including the filename where a the screenshot should be saved
+     * If the path doesn't exist, the method generate it itself
+     *
+     * @param string $identifier identifies your test object
+     * @return string Path an name of the image file
+     */
     private function getScreenshotPath ($identifier)
     {
         $debugDir = \Codeception\Configuration::logDir() . 'debug/tmp/';
@@ -73,11 +117,24 @@ class VisualCeption extends \Codeception\Module
         return $debugDir . $this->getScreenshotName($identifier);
     }
 
+    /**
+     * Returns the reference image path including the filename
+     *
+     * @param string $identifier identifies your test object
+     * @return string Name of the reference image file
+     */
     private function getExpectedScreenshotPath ($identifier)
     {
         return $this->referenceImageDir . $this->getScreenshotName($identifier);
     }
 
+    /**
+     * Generate the screenshot of the dom element
+     *
+     * @param string $identifier identifies your test object
+     * @param array $coords Coordinates where the DOM element is located
+     * @return string Path of the current screenshot image
+     */
     private function createScreenshot ($identifier, array $coords)
     {
         $webDriverModule = $this->getModule("WebDriver");
@@ -98,10 +155,17 @@ class VisualCeption extends \Codeception\Module
         return $elementPath;
     }
 
+    /**
+     * Compare the reference image with a current screenshot, identified by their indentifier name
+     * and their element ID
+     *
+     * @param string $identifier identifies your test object
+     * @param null $elementID DOM ID of the element, which should be screenshotted
+     */
     public function compareScreenshot ($identifier, $elementID = null)
     {
         $coords = $this->getCoordinates($elementID);
-        $currentImagePath = $this->createScreenshot($identifier, $coords);
+        $this->createScreenshot($identifier, $coords);
 
         $compareResult = $this->compare($identifier);
 
@@ -118,12 +182,25 @@ class VisualCeption extends \Codeception\Module
         }
     }
 
+    /**
+     * Returns the image path including the filename of a deviation image
+     *
+     * @param $identifier identifies your test object
+     * @return string Path of the deviation image
+     */
     private function getDeviationScreenshotPath ($identifier)
     {
         $debugDir = \Codeception\Configuration::logDir() . 'debug/';
         return $debugDir . 'compare.' . $this->getScreenshotName($identifier);
     }
 
+    /**
+     * Compare two images by its identifiers. If the reference image doesn't exists
+     * the image is copied to the reference path.
+     *
+     * @param $identifier identifies your test object
+     * @return array Test result of image comparison
+     */
     private function compare ($identifier)
     {
         $currentImagePath = $this->getScreenshotPath($identifier);
@@ -137,6 +214,13 @@ class VisualCeption extends \Codeception\Module
         }
     }
 
+    /**
+     * Compares to images by given file path
+     *
+     * @param $image1 Path to the exprected reference image
+     * @param $image2 Path to the current image in the screenshot
+     * @return array Result of the comparison
+     */
     private function compareImages ($image1, $image2)
     {
         $imagick1 = new \Imagick($image1);
