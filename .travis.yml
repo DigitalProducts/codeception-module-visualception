@@ -4,4 +4,7 @@ php:
   - 5.4
   - 5.5
 
-script: tests/integration/codecept.phar --config=tests/integration/codeception.yml run tests/integration/
+before-script:
+  - cd test/integration/
+
+script: php codecept.phar run
