@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 namespace Codeception\Module;
@@ -34,7 +35,7 @@ class VisualCeption extends \Codeception\Module
         }
 
         if (! is_dir($this->referenceImageDir)) {
-            mkdir($this->referenceImageDir, 0777);
+            mkdir($this->referenceImageDir, 0666);
         }
     }
 
@@ -68,7 +69,7 @@ class VisualCeption extends \Codeception\Module
     {
         $debugDir = \Codeception\Configuration::logDir() . 'debug/tmp/';
         if (! is_dir($debugDir)) {
-            mkdir($debugDir, 0777);
+            mkdir($debugDir, 0666);
         }
         return $debugDir . $this->getScreenshotName($identifier);
     }
