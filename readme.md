@@ -1,7 +1,7 @@
 # VisualCeption
 Visual regression tests integrated in [Codeception](http://codeception.com/).
 
-This module can be used to compare screenshots of a website element. 
+This module can be used to compare current representation of a website element with an expeted. 
 
 
 ## How it works
