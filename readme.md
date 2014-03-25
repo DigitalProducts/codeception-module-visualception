@@ -52,10 +52,11 @@ VisualCeption:
 
 ## Usage
 
-VisualCeption is really easy to use. There is only one method that will be added to your WebGuy <code>compareScreenshot</code>. This will be used to name the screenshot and identify the elements that has to be screenshot.  
+VisualCeption is really easy to use. There are only two method that will be added to your WebGuy <code>seeVisualChanges</code> and <code>dontSeeVisualChanges</code>.
 
 ```php
-$I->compareScreenshot( "uniqueIdentifier", "elementId" );
+$I->seeVisualChanges( "uniqueIdentifier1", "elementId1" );
+$I->dontSeeVisualChanges( "uniqueIdentifier2", "elementId2" );
 ```
 
 * **uniqueIdentifier** For comparing the images it is important to have a stable name. This is the corresponding name.
@@ -63,8 +64,10 @@ $I->compareScreenshot( "uniqueIdentifier", "elementId" );
 
 **Example Usage**
 ```php
-$I->compareScreenshot( "subNavigation", "#subNav" );
+$I->seeVisualChanges( "subNavigation", "#subNav" );
 ```
+
+If you need more information about the test run please use the command line debug option (-d).
 
 ## Restriction
 
