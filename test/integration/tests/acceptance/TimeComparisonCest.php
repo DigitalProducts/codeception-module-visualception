@@ -10,5 +10,9 @@ class TimeComparisonCest
     {
         $I->amOnPage("/VisualCeption/time.php");
         $I->compareScreenshot("the-time", "#thetime");
+
+        // the test has to be called twice for comparison on the travis server
+        $I->amOnPage("/VisualCeption/time.php");
+        $I->compareScreenshot("the-time", "#thetime");
     }
 }

@@ -7,6 +7,10 @@ namespace Codeception\Module;
  * @copyright Copyright (c) 2014 G+J Digital Products GmbH
  * @license MIT license, http://www.opensource.org/licenses/mit-license.php
  * @package Codeception\Module
+ *
+ * @author Nils Langner <langner.nils@guj.de>
+ * @author Torsten Franz
+ * @author Sebastian Neubert
  */
 class VisualCeption extends \Codeception\Module
 {
@@ -53,11 +57,12 @@ class VisualCeption extends \Codeception\Module
         if (array_key_exists('referenceImageDir', $this->config)) {
             $this->referenceImageDir = $this->config["referenceImageDir"];
         } else {
-            throw new \RuntimeException("Reference image dir was not set, but is mandatory.");
+            $this->referenceImageDir = \Codeception\Configuration::dataDir() . 'VisualCeption/';
         }
 
         if (! is_dir($this->referenceImageDir)) {
-            mkdir($this->referenceImageDir, 0666);
+            $this->debug("Creating directory: $this->referenceImageDir");
+            mkdir($this->referenceImageDir, 0777, true);
         }
     }
 
@@ -112,7 +117,13 @@ class VisualCeption extends \Codeception\Module
     {
         $debugDir = \Codeception\Configuration::logDir() . 'debug/tmp/';
         if (! is_dir($debugDir)) {
-            mkdir($debugDir, 0666);
+            $created = mkdir($debugDir, 0777, true);
+            if( $created ) {
+            $this->debug("Creating directory: $debugDir");
+            }else{
+                throw new \RuntimeException("Unable to create temporary screenshot dir ($debugDir)");
+            }
+
         }
         return $debugDir . $this->getScreenshotName($identifier);
     }
@@ -160,7 +171,7 @@ class VisualCeption extends \Codeception\Module
      * and their element ID
      *
      * @param string $identifier identifies your test object
-     * @param null $elementID DOM ID of the element, which should be screenshotted
+     * @param string $elementID DOM ID of the element, which should be screenshotted
      */
     public function compareScreenshot ($identifier, $elementID = null)
     {
@@ -170,8 +181,6 @@ class VisualCeption extends \Codeception\Module
         $compareResult = $this->compare($identifier);
 
         unlink($this->getScreenshotPath($identifier));
-
-        $this->debug($compareResult);
 
         $deviation = round($compareResult[1] * 100, 2);
 
@@ -207,6 +216,7 @@ class VisualCeption extends \Codeception\Module
         $expectedImagePath = $this->getExpectedScreenshotPath($identifier);
 
         if (! file_exists($expectedImagePath)) {
+            $this->debug("Copying image (from $currentImagePath to $expectedImagePath");
             copy($currentImagePath, $expectedImagePath);
             return array (null, 0);
         } else {
@@ -228,8 +238,6 @@ class VisualCeption extends \Codeception\Module
 
         $result = $imagick1->compareImages($imagick2, \Imagick::METRIC_MEANSQUAREERROR);
         $result[0]->setImageFormat("png");
-
-        $this->debug($result);
 
         return $result;
     }
