@@ -64,7 +64,7 @@ class VisualCeption extends \Codeception\Module
      * @param string $identifier identifies your test object
      * @param string $elementID DOM ID of the element, which should be screenshotted
      */
-    public function dontseeVisualChanges ($identifier, $elementID = null)
+    public function dontSeeVisualChanges ($identifier, $elementID = null)
     {
         $deviationResult = $this->getDeviation($identifier, $elementID);
         if (! is_null($deviationResult["deviationImage"])) {
