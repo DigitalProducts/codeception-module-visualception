@@ -10,5 +10,6 @@ before_script:
   - java -jar selenium-server-standalone-2.35.0.jar -port 4444 >/dev/null 2>&1 &
   - cd test/integration/
   - mkdir tests/_log
+  - php codecept.phar build
 
 script: php codecept.phar run -d
