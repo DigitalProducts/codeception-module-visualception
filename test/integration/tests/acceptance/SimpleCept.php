@@ -1,5 +1,7 @@
 <?php
 
+$I = new WebGuy($scenario);
+
         $I->amOnPage("/VisualCeption/seeVisualChanges.php");
         $I->seeVisualChanges("block", "#theblock");
 
