@@ -62,7 +62,7 @@ class VisualCeption extends \Codeception\Module
      * @param string $identifier identifies your test object
      * @param string $elementID DOM ID of the element, which should be screenshotted
      */
-    public function seeVisualChange($identifier, $elementID = null)
+    public function seeVisualChanges($identifier, $elementID = null)
     {
         $deviationResult = $this->getDeviation($identifier, $elementID);
         if ($deviationResult["deviation"] > $this->maximumDeviation) {
@@ -79,7 +79,7 @@ class VisualCeption extends \Codeception\Module
      * @param string $identifier identifies your test object
      * @param string $elementID DOM ID of the element, which should be screenshotted
      */
-    public function dontSeeVisualChange($identifier, $elementID = null)
+    public function dontSeeVisualChanges($identifier, $elementID = null)
     {
         $deviationResult = $this->getDeviation($identifier, $elementID);
         if ($deviationResult["deviation"] <= $this->maximumDeviation) {
