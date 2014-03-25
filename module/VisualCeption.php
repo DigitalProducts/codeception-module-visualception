@@ -42,6 +42,53 @@ class VisualCeption extends \Codeception\Module
         $this->test = $test;
     }
 
+    private function getDeviation($identifier, $elementID)
+    {
+        $coords = $this->getCoordinates($elementID);
+        $this->createScreenshot($identifier, $coords);
+
+        $compareResult = $this->compare($identifier);
+
+        unlink($this->getScreenshotPath($identifier));
+
+        $deviation = round($compareResult[1] * 100, 2);
+        return array("deviation" => $deviation, "deviationImage" => $compareResult[0]);
+    }
+
+    /**
+     * Compare the reference image with a current screenshot, identified by their indentifier name
+     * and their element ID.
+     *
+     * @param string $identifier identifies your test object
+     * @param string $elementID DOM ID of the element, which should be screenshotted
+     */
+    public function seeVisualChange($identifier, $elementID = null)
+    {
+        $deviationResult = $this->getDeviation($identifier, $elementID);
+        if ($deviationResult["deviation"] > $this->maximumDeviation) {
+            $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
+            $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
+            $this->assertTrue(false, "The deviation of the taken screenshot is too high (".$deviationResult["deviation"]."%).\nSee $compareScreenshotPath for a deviation screenshot.");
+        }
+    }
+
+    /**
+     * Compare the reference image with a current screenshot, identified by their indentifier name
+     * and their element ID.
+     *
+     * @param string $identifier identifies your test object
+     * @param string $elementID DOM ID of the element, which should be screenshotted
+     */
+    public function dontSeeVisualChange($identifier, $elementID = null)
+    {
+        $deviationResult = $this->getDeviation($identifier, $elementID);
+        if ($deviationResult["deviation"] <= $this->maximumDeviation) {
+            $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
+            $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
+            $this->assertTrue(false, "The deviation of the taken screenshot is too low (".$deviationResult["deviation"]."%).\nSee $compareScreenshotPath for a deviation screenshot.");
+        }
+    }
+
     /**
      * Initialize the module and read the config. Throws a runtime exception, if the
      * reference image dir is not set in the config
@@ -164,31 +211,6 @@ class VisualCeption extends \Codeception\Module
         unlink($screenshotPath);
 
         return $elementPath;
-    }
-
-    /**
-     * Compare the reference image with a current screenshot, identified by their indentifier name
-     * and their element ID
-     *
-     * @param string $identifier identifies your test object
-     * @param string $elementID DOM ID of the element, which should be screenshotted
-     */
-    public function compareScreenshot ($identifier, $elementID = null)
-    {
-        $coords = $this->getCoordinates($elementID);
-        $this->createScreenshot($identifier, $coords);
-
-        $compareResult = $this->compare($identifier);
-
-        unlink($this->getScreenshotPath($identifier));
-
-        $deviation = round($compareResult[1] * 100, 2);
-
-        if ($deviation > $this->maximumDeviation) {
-            $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
-            $compareResult[0]->writeImage($compareScreenshotPath);
-            $this->assertTrue(false, "The deviation of the taken screenshot is too high (".$deviation."%).\nSee $compareScreenshotPath for a deviation screenshot.");
-        }
     }
 
     /**
