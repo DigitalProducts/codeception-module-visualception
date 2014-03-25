@@ -53,6 +53,7 @@ class VisualCeption extends \Codeception\Module
         unlink($this->getScreenshotPath($identifier));
 
         $deviation = round($compareResult[1] * 100, 2);
+        $this->debug("The deviation between the images is ". $deviation . " percent");
         return array ("deviation" => $deviation, "deviationImage" => $compareResult[0]);
     }
 
