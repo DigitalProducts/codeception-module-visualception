@@ -4,6 +4,7 @@ namespace Codeception\Module;
 
 /**
  * Class VisualCeption
+ *
  * @copyright Copyright (c) 2014 G+J Digital Products GmbH
  * @license MIT license, http://www.opensource.org/licenses/mit-license.php
  * @package Codeception\Module
@@ -42,8 +43,61 @@ class VisualCeption extends \Codeception\Module
         $this->test = $test;
     }
 
+    private function getDeviation ($identifier, $elementID)
+    {
+        $coords = $this->getCoordinates($elementID);
+        $this->createScreenshot($identifier, $coords);
+
+        $compareResult = $this->compare($identifier);
+
+        unlink($this->getScreenshotPath($identifier));
+
+        $deviation = round($compareResult[1] * 100, 2);
+        $this->debug("The deviation between the images is ". $deviation . " percent");
+        return array ("deviation" => $deviation, "deviationImage" => $compareResult[0]);
+    }
+
     /**
-     * Initialize the module and read the config. Throws a runtime exception, if the
+     * Compare the reference image with a current screenshot, identified by their indentifier name
+     * and their element ID.
+     *
+     * @param string $identifier identifies your test object
+     * @param string $elementID DOM ID of the element, which should be screenshotted
+     */
+    public function dontSeeVisualChanges ($identifier, $elementID = null)
+    {
+        $deviationResult = $this->getDeviation($identifier, $elementID);
+        if (! is_null($deviationResult["deviationImage"])) {
+            if ($deviationResult["deviation"] > $this->maximumDeviation) {
+                $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
+                $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
+                $this->assertTrue(false, "The deviation of the taken screenshot is too high (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.");
+            }
+        }
+    }
+
+    /**
+     * Compare the reference image with a current screenshot, identified by their indentifier name
+     * and their element ID.
+     *
+     * @param string $identifier identifies your test object
+     * @param string $elementID DOM ID of the element, which should be screenshotted
+     */
+    public function seeVisualChanges ($identifier, $elementID = null)
+    {
+        $deviationResult = $this->getDeviation($identifier, $elementID);
+        if (! is_null($deviationResult["deviationImage"])) {
+            if ($deviationResult["deviation"] <= $this->maximumDeviation) {
+                $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
+                $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
+                $this->assertTrue(false, "The deviation of the taken screenshot is too low (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.");
+            }
+        }
+    }
+
+    /**
+     * Initialize the module and read the config.
+     * Throws a runtime exception, if the
      * reference image dir is not set in the config
      *
      * @throws \RuntimeException
@@ -67,7 +121,8 @@ class VisualCeption extends \Codeception\Module
     }
 
     /**
-     * Find the position and proportion of a DOM element, specified by it's ID. The method inject the
+     * Find the position and proportion of a DOM element, specified by it's ID.
+     * The method inject the
      * JQuery Framework and uses the "noConflict"-mode to get the width, height and offset params.
      *
      * @param $elementId DOM ID of the element, which should be screenshotted
@@ -80,7 +135,7 @@ class VisualCeption extends \Codeception\Module
             $elementId = 'body';
         }
 
-        $jQueryString = file_get_contents(__DIR__."/jquery.js");
+        $jQueryString = file_get_contents(__DIR__ . "/jquery.js");
         $webDriver->executeScript($jQueryString);
         $webDriver->executeScript('jQuery.noConflict();');
 
@@ -118,12 +173,11 @@ class VisualCeption extends \Codeception\Module
         $debugDir = \Codeception\Configuration::logDir() . 'debug/tmp/';
         if (! is_dir($debugDir)) {
             $created = mkdir($debugDir, 0777, true);
-            if( $created ) {
-            $this->debug("Creating directory: $debugDir");
-            }else{
+            if ($created) {
+                $this->debug("Creating directory: $debugDir");
+            } else {
                 throw new \RuntimeException("Unable to create temporary screenshot dir ($debugDir)");
             }
-
         }
         return $debugDir . $this->getScreenshotName($identifier);
     }
@@ -157,38 +211,13 @@ class VisualCeption extends \Codeception\Module
         $webDriver->takeScreenshot($screenshotPath);
 
         $screenShotImage = new \Imagick();
-        $screenShotImage->readImage( $screenshotPath );
-        $screenShotImage->cropImage( $coords['width'], $coords['height'], $coords['offset_x'], $coords['offset_y'] );
-        $screenShotImage->writeImage( $elementPath );
+        $screenShotImage->readImage($screenshotPath);
+        $screenShotImage->cropImage($coords['width'], $coords['height'], $coords['offset_x'], $coords['offset_y']);
+        $screenShotImage->writeImage($elementPath);
 
         unlink($screenshotPath);
 
         return $elementPath;
-    }
-
-    /**
-     * Compare the reference image with a current screenshot, identified by their indentifier name
-     * and their element ID
-     *
-     * @param string $identifier identifies your test object
-     * @param string $elementID DOM ID of the element, which should be screenshotted
-     */
-    public function compareScreenshot ($identifier, $elementID = null)
-    {
-        $coords = $this->getCoordinates($elementID);
-        $this->createScreenshot($identifier, $coords);
-
-        $compareResult = $this->compare($identifier);
-
-        unlink($this->getScreenshotPath($identifier));
-
-        $deviation = round($compareResult[1] * 100, 2);
-
-        if ($deviation > $this->maximumDeviation) {
-            $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
-            $compareResult[0]->writeImage($compareScreenshotPath);
-            $this->assertTrue(false, "The deviation of the taken screenshot is too high (".$deviation."%).\nSee $compareScreenshotPath for a deviation screenshot.");
-        }
     }
 
     /**
@@ -204,7 +233,8 @@ class VisualCeption extends \Codeception\Module
     }
 
     /**
-     * Compare two images by its identifiers. If the reference image doesn't exists
+     * Compare two images by its identifiers.
+     * If the reference image doesn't exists
      * the image is copied to the reference path.
      *
      * @param $identifier identifies your test object
