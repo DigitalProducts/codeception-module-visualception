@@ -7,6 +7,7 @@ php:
 
 env:
  - CODECEPT_VERSION="1"
+ - CODECEPT_VERSION="2"
 
 before_script:
   - printf "\n" | pecl install imagick
