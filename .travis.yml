@@ -9,6 +9,11 @@ env:
  - CODECEPT_VERSION="1"
  - CODECEPT_VERSION="2"
 
+matrix:
+  exclude:
+    - php: 5.3
+    - env: CODECEPT_VERSION="2"
+
 before_script:
   - printf "\n" | pecl install imagick
   - wget http://selenium.googlecode.com/files/selenium-server-standalone-2.35.0.jar
