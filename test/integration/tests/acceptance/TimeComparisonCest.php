@@ -19,11 +19,11 @@ class TimeComparisonCest
     public function dontSeeVisualChanges (WebGuy $I, $scenario)
     {
         $I->amOnPage("/VisualCeption/dontSeeVisualChanges.php");
-        $I->dontSeeVisualChanges("block", "#theblock");
+        $I->dontSeeVisualChanges("block2", "#theblock");
 
         // the test has to be called twice for comparison on the travis server
         $I->amOnPage("/VisualCeption/dontSeeVisualChanges.php");
-        $I->dontSeeVisualChanges("block", "#theblock");
+        $I->dontSeeVisualChanges("block2", "#theblock");
     }
 
 }
