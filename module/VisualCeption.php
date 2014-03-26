@@ -50,7 +50,7 @@ class VisualCeption extends \Codeception\Module
 
         $compareResult = $this->compare($identifier);
 
-        #unlink($this->getScreenshotPath($identifier));
+        unlink($this->getScreenshotPath($identifier));
 
         $deviation = round($compareResult[1] * 100, 2);
         $this->debug("The deviation between the images is ". $deviation . " percent");
@@ -220,7 +220,7 @@ class VisualCeption extends \Codeception\Module
         $screenShotImage->cropImage($coords['width'], $coords['height'], $coords['offset_x'], $coords['offset_y']);
         $screenShotImage->writeImage($elementPath);
 
-        #unlink($screenshotPath);
+        unlink($screenshotPath);
 
         return $elementPath;
     }
