@@ -11,6 +11,8 @@ class TimeComparisonCest
         $I->amOnPage("/VisualCeption/seeVisualChanges.php");
         $I->seeVisualChanges("block", "#theblock");
 
+        $I->wait(1);
+
         // the test has to be called twice for comparison on the travis server
         $I->amOnPage("/VisualCeption/seeVisualChanges.php");
         $I->seeVisualChanges("block", "#theblock");
@@ -20,6 +22,8 @@ class TimeComparisonCest
     {
         $I->amOnPage("/VisualCeption/dontSeeVisualChanges.php");
         $I->dontSeeVisualChanges("block2", "#theblock");
+
+        $I->wait(1);
 
         // the test has to be called twice for comparison on the travis server
         $I->amOnPage("/VisualCeption/dontSeeVisualChanges.php");
