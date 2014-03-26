@@ -12,7 +12,7 @@ env:
 matrix:
   exclude:
     - php: 5.3
-    - env: CODECEPT_VERSION="2"
+      env: CODECEPT_VERSION="2"
 
 before_script:
   - printf "\n" | pecl install imagick
