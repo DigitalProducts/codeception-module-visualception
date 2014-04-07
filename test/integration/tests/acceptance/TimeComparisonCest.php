@@ -26,4 +26,14 @@ class TimeComparisonCest
         $I->dontSeeVisualChanges("block", "#theblock");
     }
 
+    public function dontSeeVisualChangesAndHideElement (WebGuy $I, $scenario)
+    {
+        $I->amOnPage("/VisualCeption/seeVisualChanges.php");
+        $I->dontSeeVisualChanges("body", "body", "#theblock");
+
+        // the test has to be called twice for comparison on the travis server
+        $I->amOnPage("/VisualCeption/seeVisualChanges.php");
+        $I->dontSeeVisualChanges("body", "body", "#theblock");
+    }
+
 }

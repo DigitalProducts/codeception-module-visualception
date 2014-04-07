@@ -20,6 +20,9 @@ class VisualCeption extends \Codeception\Module
 
     private $maximumDeviation = 0;
 
+    private $webDriver = null;
+    private $webDriverModule = null;
+
     /**
      * Create an object from VisualCeption Class
      *
@@ -40,21 +43,35 @@ class VisualCeption extends \Codeception\Module
      */
     public function _before (\Codeception\TestCase $test)
     {
+        $this->webDriverModule = $this->getModule("WebDriver");
+        $this->webDriver = $this->webDriverModule->webDriver;
+
         $this->test = $test;
     }
 
-    private function getDeviation ($identifier, $elementID)
+    /**
+     * Compare the reference image with a current screenshot, identified by their indentifier name
+     * and their element ID.
+     *
+     * @param string $identifier Identifies your test object
+     * @param string $elementID DOM ID of the element, which should be screenshotted
+     * @param string|array $excludeElements Element name or array of Element names, which should not appear in the screenshot
+     */
+    public function seeVisualChanges ($identifier, $elementID = null, $excludeElements = array())
     {
-        $coords = $this->getCoordinates($elementID);
-        $this->createScreenshot($identifier, $coords);
+        if (!is_array($excludeElements) && (string) $excludeElements !== '') {
+            $excludeElements = (array) $excludeElements;
+        }
 
-        $compareResult = $this->compare($identifier);
+        $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements);
 
-        unlink($this->getScreenshotPath($identifier));
-
-        $deviation = round($compareResult[1] * 100, 2);
-        $this->debug("The deviation between the images is ". $deviation . " percent");
-        return array ("deviation" => $deviation, "deviationImage" => $compareResult[0]);
+        if (! is_null($deviationResult["deviationImage"])) {
+            if ($deviationResult["deviation"] <= $this->maximumDeviation) {
+                $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
+                $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
+                $this->assertTrue(false, "The deviation of the taken screenshot is too low (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.");
+            }
+        }
     }
 
     /**
@@ -63,10 +80,16 @@ class VisualCeption extends \Codeception\Module
      *
      * @param string $identifier identifies your test object
      * @param string $elementID DOM ID of the element, which should be screenshotted
+     * @param string|array $excludeElements string of Element name or array of Element names, which should not appear in the screenshot
      */
-    public function dontSeeVisualChanges ($identifier, $elementID = null)
+    public function dontSeeVisualChanges ($identifier, $elementID = null, $excludeElements = array())
     {
-        $deviationResult = $this->getDeviation($identifier, $elementID);
+        if (!is_array($excludeElements) && (string) $excludeElements !== '') {
+            $excludeElements = (array) (string)$excludeElements;
+        }
+
+        $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements);
+
         if (! is_null($deviationResult["deviationImage"])) {
             if ($deviationResult["deviation"] > $this->maximumDeviation) {
                 $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
@@ -77,22 +100,25 @@ class VisualCeption extends \Codeception\Module
     }
 
     /**
-     * Compare the reference image with a current screenshot, identified by their indentifier name
-     * and their element ID.
+     * Compares the two images and calculate the deviation between expected and actual image
      *
-     * @param string $identifier identifies your test object
-     * @param string $elementID DOM ID of the element, which should be screenshotted
+     * @param $identifier Identifies your test object
+     * @param $elementID DOM ID of the element, which should be screenshotted
+     * @param array $excludeElements Element names, which should not appear in the screenshot
+     * @return array Includes the calculation of deviation in percent and the diff-image
      */
-    public function seeVisualChanges ($identifier, $elementID = null)
+    private function getDeviation ($identifier, $elementID, array $excludeElements = array())
     {
-        $deviationResult = $this->getDeviation($identifier, $elementID);
-        if (! is_null($deviationResult["deviationImage"])) {
-            if ($deviationResult["deviation"] <= $this->maximumDeviation) {
-                $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
-                $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
-                $this->assertTrue(false, "The deviation of the taken screenshot is too low (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.");
-            }
-        }
+        $coords = $this->getCoordinates($elementID);
+        $this->createScreenshot($identifier, $coords, $excludeElements);
+
+        $compareResult = $this->compare($identifier);
+
+        unlink($this->getScreenshotPath($identifier));
+
+        $deviation = round($compareResult[1] * 100, 2);
+        $this->debug("The deviation between the images is ". $deviation . " percent");
+        return array ("deviation" => $deviation, "deviationImage" => $compareResult[0]);
     }
 
     /**
@@ -130,20 +156,19 @@ class VisualCeption extends \Codeception\Module
      */
     private function getCoordinates ($elementId)
     {
-        $webDriver = $this->getModule("WebDriver")->webDriver;
         if (is_null($elementId)) {
             $elementId = 'body';
         }
 
         $jQueryString = file_get_contents(__DIR__ . "/jquery.js");
-        $webDriver->executeScript($jQueryString);
-        $webDriver->executeScript('jQuery.noConflict();');
+        $this->webDriver->executeScript($jQueryString);
+        $this->webDriver->executeScript('jQuery.noConflict();');
 
         $imageCoords = array ();
-        $imageCoords['offset_x'] = (string) $webDriver->executeScript('var element = jQuery( "' . $elementId . '" );var offset = element.offset();return offset.left;');
-        $imageCoords['offset_y'] = (string) $webDriver->executeScript('var element = jQuery( "' . $elementId . '" );var offset = element.offset();return offset.top;');
-        $imageCoords['width'] = (string) $webDriver->executeScript('var element = jQuery( "' . $elementId . '" );return element.width();');
-        $imageCoords['height'] = (string) $webDriver->executeScript('var element = jQuery( "' . $elementId . '" );return element.height();');
+        $imageCoords['offset_x'] = (string) $this->webDriver->executeScript('var element = jQuery( "' . $elementId . '" );var offset = element.offset();return offset.left;');
+        $imageCoords['offset_y'] = (string) $this->webDriver->executeScript('var element = jQuery( "' . $elementId . '" );var offset = element.offset();return offset.top;');
+        $imageCoords['width'] = (string) $this->webDriver->executeScript('var element = jQuery( "' . $elementId . '" );return element.width();');
+        $imageCoords['height'] = (string) $this->webDriver->executeScript('var element = jQuery( "' . $elementId . '" );return element.height();');
 
         return $imageCoords;
     }
@@ -167,6 +192,7 @@ class VisualCeption extends \Codeception\Module
      *
      * @param string $identifier identifies your test object
      * @return string Path an name of the image file
+     * @throws \RuntimeException if debug dir could not create
      */
     private function getScreenshotPath ($identifier)
     {
@@ -198,17 +224,24 @@ class VisualCeption extends \Codeception\Module
      *
      * @param string $identifier identifies your test object
      * @param array $coords Coordinates where the DOM element is located
+     * @param array $excludeElements List of elements, which should not appear in the screenshot
      * @return string Path of the current screenshot image
      */
-    private function createScreenshot ($identifier, array $coords)
+    private function createScreenshot ($identifier, array $coords, array $excludeElements = array())
     {
-        $webDriverModule = $this->getModule("WebDriver");
-        $webDriver = $webDriverModule->webDriver;
-
         $screenshotPath = \Codeception\Configuration::logDir() . 'debug/' . "fullscreenshot.tmp.png";
         $elementPath = $this->getScreenshotPath($identifier);
 
-        $webDriver->takeScreenshot($screenshotPath);
+        // exclude Elements here
+        if (false !== reset($excludeElements)) {
+            $this->hideElementsForScreenshot($excludeElements);
+        }
+
+        $this->webDriver->takeScreenshot($screenshotPath);
+
+        if (false !== reset($excludeElements)) {
+            $this->resetHideElementsForScreenshot($excludeElements);
+        }
 
         $screenShotImage = new \Imagick();
         $screenShotImage->readImage($screenshotPath);
@@ -218,6 +251,34 @@ class VisualCeption extends \Codeception\Module
         unlink($screenshotPath);
 
         return $elementPath;
+    }
+
+    /**
+     * Hide the given elements with CSS visibility = hidden. Wait a second after hiding
+     *
+     * @param array $excludeElements Array of strings, which should be not visible
+     */
+    private function hideElementsForScreenshot(array $excludeElements)
+    {
+        foreach ($excludeElements as $element) {
+            $this->webDriver->executeScript('var element = jQuery( "'.$element.'" ).css("visibility","hidden");');
+            $this->debug("set visibility of element '$element' to 'hidden'");
+        }
+        $this->webDriverModule->wait(1);
+    }
+
+    /**
+     * Reset hiding the given elements with CSS visibility = visible. Wait a second after reset hiding
+     *
+     * @param array $excludeElements array of strings, which should be visible again
+     */
+    private function resetHideElementsForScreenshot(array $excludeElements)
+    {
+        foreach ($excludeElements as $element) {
+            $this->webDriver->executeScript('var element = jQuery( "'.$element.'" ).css("visibility","visible");');
+            $this->debug("set visibility of element '$element' to 'visible'");
+        }
+        $this->webDriverModule->wait(1);
     }
 
     /**
