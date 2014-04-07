@@ -59,9 +59,7 @@ class VisualCeption extends \Codeception\Module
      */
     public function seeVisualChanges ($identifier, $elementID = null, $excludeElements = array())
     {
-        if (!is_array($excludeElements) && (string) $excludeElements !== '') {
-            $excludeElements = (array) $excludeElements;
-        }
+        $excludeElements = (array) $excludeElements;
 
         $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements);
 
@@ -84,9 +82,7 @@ class VisualCeption extends \Codeception\Module
      */
     public function dontSeeVisualChanges ($identifier, $elementID = null, $excludeElements = array())
     {
-        if (!is_array($excludeElements) && (string) $excludeElements !== '') {
-            $excludeElements = (array) (string)$excludeElements;
-        }
+        $excludeElements = (array) $excludeElements;
 
         $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements);
 
@@ -97,6 +93,36 @@ class VisualCeption extends \Codeception\Module
                 $this->assertTrue(false, "The deviation of the taken screenshot is too high (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.");
             }
         }
+    }
+
+    /**
+     * Hide an element to set the visibility to hidden
+     *
+     * @param $elementSelector String of jQuery Element selector, set visibility to hidden
+     */
+    public function hideElement($elementSelector)
+    {
+        $this->webDriver->executeScript('
+            if( jQuery("'.$elementSelector.'").length > 0 ) {
+                jQuery( "'.$elementSelector.'" ).css("visibility","hidden");
+            }
+        ');
+        $this->debug("set visibility of element '$elementSelector' to 'hidden'");
+    }
+
+    /**
+     * Show an element to set the visibility to visible
+     *
+     * @param $elementSelector String of jQuery Element selector, set visibility to visible
+     */
+    public function showElement($elementSelector)
+    {
+        $this->webDriver->executeScript('
+            if( jQuery("'.$elementSelector.'").length > 0 ) {
+                jQuery( "'.$elementSelector.'" ).css("visibility","visible");
+            }
+        ');
+        $this->debug("set visibility of element '$elementSelector' to 'visible'");
     }
 
     /**
@@ -165,10 +191,10 @@ class VisualCeption extends \Codeception\Module
         $this->webDriver->executeScript('jQuery.noConflict();');
 
         $imageCoords = array ();
-        $imageCoords['offset_x'] = (string) $this->webDriver->executeScript('var element = jQuery( "' . $elementId . '" );var offset = element.offset();return offset.left;');
-        $imageCoords['offset_y'] = (string) $this->webDriver->executeScript('var element = jQuery( "' . $elementId . '" );var offset = element.offset();return offset.top;');
-        $imageCoords['width'] = (string) $this->webDriver->executeScript('var element = jQuery( "' . $elementId . '" );return element.width();');
-        $imageCoords['height'] = (string) $this->webDriver->executeScript('var element = jQuery( "' . $elementId . '" );return element.height();');
+        $imageCoords['offset_x'] = (string) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).offset().left;');
+        $imageCoords['offset_y'] = (string) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).offset().top;');
+        $imageCoords['width'] = (string) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).width();');
+        $imageCoords['height'] = (string) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).height();');
 
         return $imageCoords;
     }
@@ -237,16 +263,9 @@ class VisualCeption extends \Codeception\Module
         $screenshotPath = \Codeception\Configuration::logDir() . 'debug/' . "fullscreenshot.tmp.png";
         $elementPath = $this->getScreenshotPath($identifier);
 
-        // exclude Elements here
-        if (false !== reset($excludeElements)) {
-            $this->hideElementsForScreenshot($excludeElements);
-        }
-
+        $this->hideElementsForScreenshot($excludeElements);
         $this->webDriver->takeScreenshot($screenshotPath);
-
-        if (false !== reset($excludeElements)) {
-            $this->resetHideElementsForScreenshot($excludeElements);
-        }
+        $this->resetHideElementsForScreenshot($excludeElements);
 
         $screenShotImage = new \Imagick();
         $screenShotImage->readImage($screenshotPath);
@@ -266,8 +285,7 @@ class VisualCeption extends \Codeception\Module
     private function hideElementsForScreenshot(array $excludeElements)
     {
         foreach ($excludeElements as $element) {
-            $this->webDriver->executeScript('var element = jQuery( "'.$element.'" ).css("visibility","hidden");');
-            $this->debug("set visibility of element '$element' to 'hidden'");
+            $this->hideElement($element);
         }
         $this->webDriverModule->wait(1);
     }
@@ -280,8 +298,7 @@ class VisualCeption extends \Codeception\Module
     private function resetHideElementsForScreenshot(array $excludeElements)
     {
         foreach ($excludeElements as $element) {
-            $this->webDriver->executeScript('var element = jQuery( "'.$element.'" ).css("visibility","visible");');
-            $this->debug("set visibility of element '$element' to 'visible'");
+            $this->showElement($element);
         }
         $this->webDriverModule->wait(1);
     }
