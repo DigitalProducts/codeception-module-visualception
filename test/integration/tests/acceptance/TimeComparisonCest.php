@@ -33,24 +33,24 @@ class TimeComparisonCest
     public function seeVisualChangesAndHideElement (WebGuy $I, $scenario)
     {
         $I->amOnPage("/VisualCeption/seeVisualChanges.php");
-        $I->seeVisualChanges("body", "body", "#intro");
+        $I->seeVisualChanges("hideTheIntro", "body", "#intro");
 
         $I->wait(1);
 
         // the test has to be called twice for comparison on the travis server
         $I->amOnPage("/VisualCeption/seeVisualChanges.php");
-        $I->seeVisualChanges("body", "body", array("#intro"));
+        $I->seeVisualChanges("hideTheIntro", "body", array("#intro"));
     }
 
     public function dontSeeVisualChangesAndHideElement (WebGuy $I, $scenario)
     {
         $I->amOnPage("/VisualCeption/seeVisualChanges.php");
-        $I->dontSeeVisualChanges("body", "body", "#theblock");
+        $I->dontSeeVisualChanges("hideTheBlock", "body", "#theblock");
 
-        $I->wait(2);
+        $I->wait(1);
 
         // the test has to be called twice for comparison on the travis server
         $I->amOnPage("/VisualCeption/seeVisualChanges.php");
-        $I->dontSeeVisualChanges("body", "body", array("#theblock"));
+        $I->dontSeeVisualChanges("hideTheBlock", "body", array("#theblock"));
     }
 }
