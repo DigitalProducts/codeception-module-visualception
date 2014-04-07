@@ -5,12 +5,21 @@ php:
   - 5.4
   - 5.5
 
+env:
+ - CODECEPT_VERSION="1"
+ - CODECEPT_VERSION="2"
+
+matrix:
+  exclude:
+    - php: 5.3
+      env: CODECEPT_VERSION="2"
+
 before_script:
   - printf "\n" | pecl install imagick
   - wget http://selenium.googlecode.com/files/selenium-server-standalone-2.35.0.jar
   - java -jar selenium-server-standalone-2.35.0.jar -port 4444 >/dev/null 2>&1 &
   - cd test/integration/
   - mkdir tests/_log
-  - php codecept.phar build
+  - php codecept${CODECEPT_VERSION}.phar build
 
-script: php codecept.phar run -d
+script: php codecept${CODECEPT_VERSION}.phar run -d

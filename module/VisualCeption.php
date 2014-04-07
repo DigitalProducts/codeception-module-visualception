@@ -183,6 +183,11 @@ class VisualCeption extends \Codeception\Module
     private function getScreenshotName ($identifier)
     {
         $caseName = str_replace('Cept.php', '', $this->test->getFileName());
+
+        $search = array('/', '\\');
+        $replace = array('.', '.');
+        $caseName = str_replace($search, $replace, $caseName);
+
         return $caseName . '.' . $identifier . '.png';
     }
 
@@ -324,6 +329,8 @@ class VisualCeption extends \Codeception\Module
      */
     private function compareImages ($image1, $image2)
     {
+        $this->debug("Trying to compare $image1 with $image2");
+
         $imagick1 = new \Imagick($image1);
         $imagick2 = new \Imagick($image2);
 
