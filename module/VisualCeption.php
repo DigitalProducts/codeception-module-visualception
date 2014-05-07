@@ -365,11 +365,15 @@ class VisualCeption extends \Codeception\Module
         $imagick1 = new \Imagick($image1);
         $imagick2 = new \Imagick($image2);
 
-        $maxWidth = max($imagick1->getImageGeometry()['width'], $imagick2->getImageGeometry()['width']);
-        $maxHeight = max($imagick1->getImageGeometry()['height'], $imagick2->getImageGeometry()['height']);
+        $imagick1Size = $imagick1->getImageGeometry();
+        $imagick2Size = $imagick2->getImageGeometry();
+
+        $maxWidth = max($imagick1Size['width'], $imagick2->getImageGeometry()['width']);
+        $maxHeight = max($imagick2Size['height'], $imagick2->getImageGeometry()['height']);
 
         $imagick1->extentImage($maxWidth, $maxHeight, 0, 0);
         $imagick2->extentImage($maxWidth, $maxHeight, 0, 0);
+
 
         try {
             $result = $imagick1->compareImages($imagick2, \Imagick::METRIC_MEANSQUAREERROR);
