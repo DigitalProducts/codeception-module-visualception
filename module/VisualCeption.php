@@ -368,18 +368,17 @@ class VisualCeption extends \Codeception\Module
         $imagick1Size = $imagick1->getImageGeometry();
         $imagick2Size = $imagick2->getImageGeometry();
 
-        $maxWidth = max($imagick1Size['width'], $imagick2->getImageGeometry()['width']);
-        $maxHeight = max($imagick2Size['height'], $imagick2->getImageGeometry()['height']);
+        $maxWidth = max($imagick1Size['width'], $imagick2Size['width']);
+        $maxHeight = max($imagick1Size['height'], $imagick2Size['height']);
 
         $imagick1->extentImage($maxWidth, $maxHeight, 0, 0);
         $imagick2->extentImage($maxWidth, $maxHeight, 0, 0);
-
 
         try {
             $result = $imagick1->compareImages($imagick2, \Imagick::METRIC_MEANSQUAREERROR);
             $result[0]->setImageFormat("png");
         } catch (\ImagickException $e) {
-            $this->debug("ImageMagickException! could not campare image1 ($image1) and image2 ($image2).\nExceptionMessage: " . $e->getMessage());
+            $this->debug("IMagickException! could not campare image1 ($image1) and image2 ($image2).\nExceptionMessage: " . $e->getMessage());
             $this->fail($e->getMessage() . ", image1 $image1 and image2 $image2.");
         }
         \PHPUnit_Framework_Assert::assertTrue(true);
