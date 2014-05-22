@@ -4,7 +4,7 @@ class TimeComparisonCest
 {
 
     /**
-     * Coparing a div that renders the current time
+     * Comparing a div that renders the current time
      */
     public function seeVisualChanges (WebGuy $I, $scenario)
     {
