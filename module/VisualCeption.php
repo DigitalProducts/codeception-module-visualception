@@ -19,6 +19,7 @@ class VisualCeption extends \Codeception\Module
     private $referenceImageDir;
 
     private $maximumDeviation = 0;
+    private $saveCurrentImageIfFailure = false;
 
     private $webDriver = null;
     private $webDriverModule = null;
@@ -71,6 +72,11 @@ class VisualCeption extends \Codeception\Module
             if ($deviationResult["deviation"] <= $this->maximumDeviation) {
                 $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
+
+                if ($this->saveCurrentImageIfFailure === true) {
+                    $saveCurrentImagePath = $this->getDeviationScreenshotPath($identifier, 'current');
+                    $deviationResult['currentImage']->writeImage($saveCurrentImagePath);
+                }
                 $this->assertTrue(false, "The deviation of the taken screenshot is too low (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.");
             }
         }
@@ -94,6 +100,11 @@ class VisualCeption extends \Codeception\Module
             if ($deviationResult["deviation"] > $this->maximumDeviation) {
                 $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
+
+                if ($this->saveCurrentImageIfFailure === true) {
+                    $saveCurrentImagePath = $this->getDeviationScreenshotPath($identifier, 'current.');
+                    $deviationResult['currentImage']->writeImage($saveCurrentImagePath);
+                }
                 $this->assertTrue(false, "The deviation of the taken screenshot is too high (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.");
             }
         }
@@ -148,7 +159,12 @@ class VisualCeption extends \Codeception\Module
 
         $deviation = round($compareResult[1] * 100, 2);
         $this->debug("The deviation between the images is ". $deviation . " percent");
-        return array ("deviation" => $deviation, "deviationImage" => $compareResult[0]);
+
+        return array (
+            "deviation" => $deviation,
+            "deviationImage" => $compareResult[0],
+            "currentImage" => $compareResult['currentImage'],
+        );
     }
 
     /**
@@ -162,6 +178,10 @@ class VisualCeption extends \Codeception\Module
     {
         if (array_key_exists('maximumDeviation', $this->config)) {
             $this->maximumDeviation = $this->config["maximumDeviation"];
+        }
+
+        if (array_key_exists('saveCurrentImageIfFailure', $this->config)) {
+            $this->saveCurrentImageIfFailure = (boolean) $this->config["saveCurrentImageIfFailure"];
         }
 
         if (array_key_exists('referenceImageDir', $this->config)) {
@@ -313,11 +333,13 @@ class VisualCeption extends \Codeception\Module
      * @param $identifier identifies your test object
      * @return string Path of the deviation image
      */
-    private function getDeviationScreenshotPath ($identifier)
+    private function getDeviationScreenshotPath ($identifier, $alternativePrefix = '')
     {
         $debugDir = \Codeception\Configuration::logDir() . 'debug/';
-        return $debugDir . 'compare.' . $this->getScreenshotName($identifier);
+        $prefix = ( $alternativePrefix === '') ? 'compare.' : $alternativePrefix;
+        return $debugDir . $prefix . $this->getScreenshotName($identifier);
     }
+
 
     /**
      * Compare two images by its identifiers.
@@ -329,13 +351,13 @@ class VisualCeption extends \Codeception\Module
      */
     private function compare ($identifier)
     {
-        $currentImagePath = $this->getScreenshotPath($identifier);
         $expectedImagePath = $this->getExpectedScreenshotPath($identifier);
+        $currentImagePath = $this->getScreenshotPath($identifier);
 
         if (! file_exists($expectedImagePath)) {
             $this->debug("Copying image (from $currentImagePath to $expectedImagePath");
             copy($currentImagePath, $expectedImagePath);
-            return array (null, 0);
+            return array (null, 0, null);
         } else {
             return $this->compareImages($expectedImagePath, $currentImagePath);
         }
@@ -366,8 +388,11 @@ class VisualCeption extends \Codeception\Module
 
         try {
             $result = $imagick1->compareImages($imagick2, \Imagick::METRIC_MEANSQUAREERROR);
-            $result[0]->setImageFormat("png");
-        } catch (\ImagickException $e) {
+            $result[0]->setImageFormat('png');
+            $result['currentImage'] = clone $imagick2;
+            $result['currentImage']->setImageFormat('png');
+        }
+        catch (\ImagickException $e) {
             $this->debug("IMagickException! could not campare image1 ($image1) and image2 ($image2).\nExceptionMessage: " . $e->getMessage());
             $this->fail($e->getMessage() . ", image1 $image1 and image2 $image2.");
         }

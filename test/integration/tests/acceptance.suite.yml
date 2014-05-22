@@ -24,3 +24,4 @@ modules:
                 webStorageEnabled: true
         VisualCeption:
             maximumDeviation: 0
+            saveCurrentImageIfFailure: true
