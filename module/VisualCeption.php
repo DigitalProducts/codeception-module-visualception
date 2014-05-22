@@ -46,6 +46,10 @@ class VisualCeption extends \Codeception\Module
         $this->webDriverModule = $this->getModule("WebDriver");
         $this->webDriver = $this->webDriverModule->webDriver;
 
+        $jQueryString = file_get_contents(__DIR__ . "/jquery.js");
+        $this->webDriver->executeScript($jQueryString);
+        $this->webDriver->executeScript('jQuery.noConflict();');
+
         $this->test = $test;
     }
 
@@ -93,6 +97,16 @@ class VisualCeption extends \Codeception\Module
                 $this->assertTrue(false, "The deviation of the taken screenshot is too high (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.");
             }
         }
+    }
+
+    /**
+     * Inject jQuery.js to the actual site
+     */
+    public function wantToUseJQuery()
+    {
+        $jQueryString = file_get_contents(__DIR__ . "/jquery.js");
+        $this->webDriver->executeScript($jQueryString);
+        $this->webDriver->executeScript('jQuery.noConflict();');
     }
 
     /**
@@ -351,9 +365,23 @@ class VisualCeption extends \Codeception\Module
         $imagick1 = new \Imagick($image1);
         $imagick2 = new \Imagick($image2);
 
-        $result = $imagick1->compareImages($imagick2, \Imagick::METRIC_MEANSQUAREERROR);
-        $result[0]->setImageFormat("png");
+        $imagick1Size = $imagick1->getImageGeometry();
+        $imagick2Size = $imagick2->getImageGeometry();
 
+        $maxWidth = max($imagick1Size['width'], $imagick2Size['width']);
+        $maxHeight = max($imagick1Size['height'], $imagick2Size['height']);
+
+        $imagick1->extentImage($maxWidth, $maxHeight, 0, 0);
+        $imagick2->extentImage($maxWidth, $maxHeight, 0, 0);
+
+        try {
+            $result = $imagick1->compareImages($imagick2, \Imagick::METRIC_MEANSQUAREERROR);
+            $result[0]->setImageFormat("png");
+        } catch (\ImagickException $e) {
+            $this->debug("IMagickException! could not campare image1 ($image1) and image2 ($image2).\nExceptionMessage: " . $e->getMessage());
+            $this->fail($e->getMessage() . ", image1 $image1 and image2 $image2.");
+        }
+        \PHPUnit_Framework_Assert::assertTrue(true);
         return $result;
     }
 }
