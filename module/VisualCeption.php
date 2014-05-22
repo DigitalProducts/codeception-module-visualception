@@ -100,21 +100,11 @@ class VisualCeption extends \Codeception\Module
     }
 
     /**
-     * Inject jQuery.js to the actual site
-     */
-    public function wantToUseJQuery()
-    {
-        $jQueryString = file_get_contents(__DIR__ . "/jquery.js");
-        $this->webDriver->executeScript($jQueryString);
-        $this->webDriver->executeScript('jQuery.noConflict();');
-    }
-
-    /**
      * Hide an element to set the visibility to hidden
      *
      * @param $elementSelector String of jQuery Element selector, set visibility to hidden
      */
-    public function hideElement($elementSelector)
+    private function hideElement($elementSelector)
     {
         $this->webDriver->executeScript('
             if( jQuery("'.$elementSelector.'").length > 0 ) {
@@ -129,7 +119,7 @@ class VisualCeption extends \Codeception\Module
      *
      * @param $elementSelector String of jQuery Element selector, set visibility to visible
      */
-    public function showElement($elementSelector)
+    private function showElement($elementSelector)
     {
         $this->webDriver->executeScript('
             if( jQuery("'.$elementSelector.'").length > 0 ) {
