@@ -1,6 +1,7 @@
 <?php
 
 namespace Codeception\Module;
+use Codeception\Module\ImageDeviationException;
 
 /**
  * Class VisualCeption
@@ -30,7 +31,7 @@ class VisualCeption extends \Codeception\Module
      * @param array $config
      * @return result
      */
-    public function __construct ($config)
+    public function __construct($config)
     {
         $result = parent::__construct($config);
         $this->init();
@@ -43,9 +44,9 @@ class VisualCeption extends \Codeception\Module
      * @param \Codeception\TestCase $test
      * @throws \Exception
      */
-    public function _before (\Codeception\TestCase $test)
+    public function _before(\Codeception\TestCase $test)
     {
-        if ( !$this->hasModule("WebDriver")) {
+        if (!$this->hasModule("WebDriver")) {
             throw new \Exception("VisualCeption uses the WebDriver. Please be sure that this module is activated.");
         }
 
@@ -67,13 +68,13 @@ class VisualCeption extends \Codeception\Module
      * @param string $elementID DOM ID of the element, which should be screenshotted
      * @param string|array $excludeElements Element name or array of Element names, which should not appear in the screenshot
      */
-    public function seeVisualChanges ($identifier, $elementID = null, $excludeElements = array())
+    public function seeVisualChanges($identifier, $elementID = null, $excludeElements = array())
     {
-        $excludeElements = (array) $excludeElements;
+        $excludeElements = (array)$excludeElements;
 
         $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements);
 
-        if (! is_null($deviationResult["deviationImage"])) {
+        if (!is_null($deviationResult["deviationImage"])) {
             if ($deviationResult["deviation"] <= $this->maximumDeviation) {
                 $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
@@ -82,7 +83,8 @@ class VisualCeption extends \Codeception\Module
                     $saveCurrentImagePath = $this->getDeviationScreenshotPath($identifier, 'current');
                     $deviationResult['currentImage']->writeImage($saveCurrentImagePath);
                 }
-                $this->assertTrue(false, "The deviation of the taken screenshot is too low (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.");
+
+                throw new ImageDeviationException("The deviation of the taken screenshot is too low (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.", "pic1", "pic2", $compareScreenshotPath);
             }
         }
     }
@@ -95,13 +97,13 @@ class VisualCeption extends \Codeception\Module
      * @param string $elementID DOM ID of the element, which should be screenshotted
      * @param string|array $excludeElements string of Element name or array of Element names, which should not appear in the screenshot
      */
-    public function dontSeeVisualChanges ($identifier, $elementID = null, $excludeElements = array())
+    public function dontSeeVisualChanges($identifier, $elementID = null, $excludeElements = array())
     {
-        $excludeElements = (array) $excludeElements;
+        $excludeElements = (array)$excludeElements;
 
         $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements);
 
-        if (! is_null($deviationResult["deviationImage"])) {
+        if (!is_null($deviationResult["deviationImage"])) {
             if ($deviationResult["deviation"] > $this->maximumDeviation) {
                 $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
@@ -110,7 +112,7 @@ class VisualCeption extends \Codeception\Module
                     $saveCurrentImagePath = $this->getDeviationScreenshotPath($identifier, 'current.');
                     $deviationResult['currentImage']->writeImage($saveCurrentImagePath);
                 }
-                $this->assertTrue(false, "The deviation of the taken screenshot is too high (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.");
+                throw new ImageDeviationException("The deviation of the taken screenshot is too hight (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.", "pic1", "pic2", $compareScreenshotPath);
             }
         }
     }
@@ -123,8 +125,8 @@ class VisualCeption extends \Codeception\Module
     private function hideElement($elementSelector)
     {
         $this->webDriver->executeScript('
-            if( jQuery("'.$elementSelector.'").length > 0 ) {
-                jQuery( "'.$elementSelector.'" ).css("visibility","hidden");
+            if( jQuery("' . $elementSelector . '").length > 0 ) {
+                jQuery( "' . $elementSelector . '" ).css("visibility","hidden");
             }
         ');
         $this->debug("set visibility of element '$elementSelector' to 'hidden'");
@@ -138,8 +140,8 @@ class VisualCeption extends \Codeception\Module
     private function showElement($elementSelector)
     {
         $this->webDriver->executeScript('
-            if( jQuery("'.$elementSelector.'").length > 0 ) {
-                jQuery( "'.$elementSelector.'" ).css("visibility","visible");
+            if( jQuery("' . $elementSelector . '").length > 0 ) {
+                jQuery( "' . $elementSelector . '" ).css("visibility","visible");
             }
         ');
         $this->debug("set visibility of element '$elementSelector' to 'visible'");
@@ -148,12 +150,12 @@ class VisualCeption extends \Codeception\Module
     /**
      * Compares the two images and calculate the deviation between expected and actual image
      *
-     * @param $identifier Identifies your test object
-     * @param $elementID DOM ID of the element, which should be screenshotted
+     * @param string $identifier Identifies your test object
+     * @param string $elementID DOM ID of the element, which should be screenshotted
      * @param array $excludeElements Element names, which should not appear in the screenshot
      * @return array Includes the calculation of deviation in percent and the diff-image
      */
-    private function getDeviation ($identifier, $elementID, array $excludeElements = array())
+    private function getDeviation($identifier, $elementID, array $excludeElements = array())
     {
         $coords = $this->getCoordinates($elementID);
         $this->createScreenshot($identifier, $coords, $excludeElements);
@@ -163,6 +165,7 @@ class VisualCeption extends \Codeception\Module
         unlink($this->getScreenshotPath($identifier));
 
         $deviation = round($compareResult[1] * 100, 2);
+
         $this->debug("The deviation between the images is ". $deviation . " percent");
 
         return array (
@@ -179,7 +182,7 @@ class VisualCeption extends \Codeception\Module
      *
      * @throws \RuntimeException
      */
-    private function init ()
+    private function init()
     {
         if (array_key_exists('maximumDeviation', $this->config)) {
             $this->maximumDeviation = $this->config["maximumDeviation"];
@@ -195,7 +198,7 @@ class VisualCeption extends \Codeception\Module
             $this->referenceImageDir = \Codeception\Configuration::dataDir() . 'VisualCeption/';
         }
 
-        if (! is_dir($this->referenceImageDir)) {
+        if (!is_dir($this->referenceImageDir)) {
             $this->debug("Creating directory: $this->referenceImageDir");
             mkdir($this->referenceImageDir, 0777, true);
         }
@@ -206,10 +209,10 @@ class VisualCeption extends \Codeception\Module
      * The method inject the
      * JQuery Framework and uses the "noConflict"-mode to get the width, height and offset params.
      *
-     * @param $elementId DOM ID of the element, which should be screenshotted
+     * @param string $elementId DOM ID of the element, which should be screenshotted
      * @return array coordinates of the element
      */
-    private function getCoordinates ($elementId)
+    private function getCoordinates($elementId)
     {
         if (is_null($elementId)) {
             $elementId = 'body';
@@ -219,18 +222,18 @@ class VisualCeption extends \Codeception\Module
         $this->webDriver->executeScript($jQueryString);
         $this->webDriver->executeScript('jQuery.noConflict();');
 
-        $imageCoords = array ();
+        $imageCoords = array();
 
-        $elementExists = (bool) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).length > 0;');
+        $elementExists = (bool)$this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).length > 0;');
 
-        if( !$elementExists) {
-            throw new \Exception("The element you want to examine ('".$elementId."') was not found.");
+        if (!$elementExists) {
+            throw new \Exception("The element you want to examine ('" . $elementId . "') was not found.");
         }
 
-        $imageCoords['offset_x'] = (string) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).offset().left;');
-        $imageCoords['offset_y'] = (string) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).offset().top;');
-        $imageCoords['width'] = (string) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).width();');
-        $imageCoords['height'] = (string) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).height();');
+        $imageCoords['offset_x'] = (string)$this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).offset().left;');
+        $imageCoords['offset_y'] = (string)$this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).offset().top;');
+        $imageCoords['width'] = (string)$this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).width();');
+        $imageCoords['height'] = (string)$this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).height();');
 
         return $imageCoords;
     }
@@ -242,7 +245,7 @@ class VisualCeption extends \Codeception\Module
      * @param string $identifier identifies your test object
      * @return string Name of the image file
      */
-    private function getScreenshotName ($identifier)
+    private function getScreenshotName($identifier)
     {
         $caseName = str_replace('Cept.php', '', $this->test->getFileName());
 
@@ -261,10 +264,10 @@ class VisualCeption extends \Codeception\Module
      * @return string Path an name of the image file
      * @throws \RuntimeException if debug dir could not create
      */
-    private function getScreenshotPath ($identifier)
+    private function getScreenshotPath($identifier)
     {
         $debugDir = \Codeception\Configuration::logDir() . 'debug/tmp/';
-        if (! is_dir($debugDir)) {
+        if (!is_dir($debugDir)) {
             $created = mkdir($debugDir, 0777, true);
             if ($created) {
                 $this->debug("Creating directory: $debugDir");
@@ -281,7 +284,7 @@ class VisualCeption extends \Codeception\Module
      * @param string $identifier identifies your test object
      * @return string Name of the reference image file
      */
-    private function getExpectedScreenshotPath ($identifier)
+    private function getExpectedScreenshotPath($identifier)
     {
         return $this->referenceImageDir . $this->getScreenshotName($identifier);
     }
@@ -294,7 +297,7 @@ class VisualCeption extends \Codeception\Module
      * @param array $excludeElements List of elements, which should not appear in the screenshot
      * @return string Path of the current screenshot image
      */
-    private function createScreenshot ($identifier, array $coords, array $excludeElements = array())
+    private function createScreenshot($identifier, array $coords, array $excludeElements = array())
     {
         $screenshotPath = \Codeception\Configuration::logDir() . 'debug/' . "fullscreenshot.tmp.png";
         $elementPath = $this->getScreenshotPath($identifier);
@@ -361,15 +364,15 @@ class VisualCeption extends \Codeception\Module
      * @param $identifier identifies your test object
      * @return array Test result of image comparison
      */
-    private function compare ($identifier)
+    private function compare($identifier)
     {
         $expectedImagePath = $this->getExpectedScreenshotPath($identifier);
         $currentImagePath = $this->getScreenshotPath($identifier);
 
-        if (! file_exists($expectedImagePath)) {
+        if (!file_exists($expectedImagePath)) {
             $this->debug("Copying image (from $currentImagePath to $expectedImagePath");
             copy($currentImagePath, $expectedImagePath);
-            return array (null, 0, null);
+            return array (null, 0, 'currentImage' => null);
         } else {
             return $this->compareImages($expectedImagePath, $currentImagePath);
         }
@@ -382,7 +385,7 @@ class VisualCeption extends \Codeception\Module
      * @param $image2 Path to the current image in the screenshot
      * @return array Result of the comparison
      */
-    private function compareImages ($image1, $image2)
+    private function compareImages($image1, $image2)
     {
         $this->debug("Trying to compare $image1 with $image2");
 
@@ -408,7 +411,6 @@ class VisualCeption extends \Codeception\Module
             $this->debug("IMagickException! could not campare image1 ($image1) and image2 ($image2).\nExceptionMessage: " . $e->getMessage());
             $this->fail($e->getMessage() . ", image1 $image1 and image2 $image2.");
         }
-        \PHPUnit_Framework_Assert::assertTrue(true);
         return $result;
     }
 }
