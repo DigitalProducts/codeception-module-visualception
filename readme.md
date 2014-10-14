@@ -63,6 +63,7 @@ VisualCeption is really easy to use. There are only two method that will be adde
 ```php
 $I->seeVisualChanges( "uniqueIdentifier1", "elementId1" );
 $I->dontSeeVisualChanges( "uniqueIdentifier2", "elementId2" );
+
 $I->dontSeeVisualChanges( "uniqueIdentifier3", "elementId3" [, array("excludeElement1", "excludeElement2")] );
 ```
 

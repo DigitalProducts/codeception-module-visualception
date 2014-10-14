@@ -41,9 +41,14 @@ class VisualCeption extends \Codeception\Module
      * Event hook before a test starts
      *
      * @param \Codeception\TestCase $test
+     * @throws \Exception
      */
     public function _before (\Codeception\TestCase $test)
     {
+        if ( !$this->hasModule("WebDriver")) {
+            throw new \Exception("VisualCeption uses the WebDriver. Please be sure that this module is activated.");
+        }
+
         $this->webDriverModule = $this->getModule("WebDriver");
         $this->webDriver = $this->webDriverModule->webDriver;
 
@@ -215,6 +220,13 @@ class VisualCeption extends \Codeception\Module
         $this->webDriver->executeScript('jQuery.noConflict();');
 
         $imageCoords = array ();
+
+        $elementExists = (bool) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).length > 0;');
+
+        if( !$elementExists) {
+            throw new \Exception("The element you want to examine ('".$elementId."') was not found.");
+        }
+
         $imageCoords['offset_x'] = (string) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).offset().left;');
         $imageCoords['offset_y'] = (string) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).offset().top;');
         $imageCoords['width'] = (string) $this->webDriver->executeScript('return jQuery( "' . $elementId . '" ).width();');
