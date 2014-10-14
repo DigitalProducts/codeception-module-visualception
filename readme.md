@@ -47,10 +47,14 @@ VisualCeption:
     referenceImageDir: /home/codeception/referenceImages/ # Path to the reference folder (optional, standard is 
                                                           # <datadir>/VisualCeption/)
     maximumDeviation: 5                                   # deviation in percent
+    saveCurrentImageIfFailure: true                       # if true, VisualCeption saves the current
+                                                          # image in debug dir (default: false)
 ```
 
 * **referenceImageDir** VisualCeption uses an "old" image for calculating the deviation. These images have to be stored in the system. This is the corresponding directory.
-* **maximumDeviation** When comparing two images the deviation will be calculated. If this deviation is greater than the maximum deviation the test will fail. 
+* **maximumDeviation** When comparing two images the deviation will be calculated. If this deviation is greater than the maximum deviation the test will fail.
+* **saveCurrentImageIfFailure** When the test fails, the current image will be saved too, so it's easier to change the reference image with this one. The image will appear beside the compare image with the prefix "current."
+
 
 ## Usage
 
