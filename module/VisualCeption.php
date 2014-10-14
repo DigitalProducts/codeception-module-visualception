@@ -99,7 +99,7 @@ class VisualCeption extends \Codeception\Module
             if ($deviationResult["deviation"] > $this->maximumDeviation) {
                 $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
-                $this->assertTrue(false, "The deviation of the taken screenshot is too high (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.");
+                throw new ImageDeviationException("The deviation of the taken screenshot is too hight (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.", "pic1", "pic2", $compareScreenshotPath);
             }
         }
     }
