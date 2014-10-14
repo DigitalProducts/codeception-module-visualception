@@ -76,7 +76,10 @@ class VisualCeption extends \Codeception\Module
             if ($deviationResult["deviation"] <= $this->maximumDeviation) {
                 $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
-                throw new ImageDeviationException("The deviation of the taken screenshot is too low (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.", "pic1", "pic2", $compareScreenshotPath);
+                throw new ImageDeviationException("The deviation of the taken screenshot is too low (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.",
+                    $this->getExpectedScreenshotPath($identifier),
+                    $this->getScreenshotPath($identifier),
+                    $compareScreenshotPath);
             }
         }
     }
@@ -99,7 +102,10 @@ class VisualCeption extends \Codeception\Module
             if ($deviationResult["deviation"] > $this->maximumDeviation) {
                 $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
-                throw new ImageDeviationException("The deviation of the taken screenshot is too hight (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.", "pic1", "pic2", $compareScreenshotPath);
+                throw new ImageDeviationException("The deviation of the taken screenshot is too hight (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.",
+                    $this->getExpectedScreenshotPath($identifier),
+                    $this->getScreenshotPath($identifier),
+                    $compareScreenshotPath);
             }
         }
     }
