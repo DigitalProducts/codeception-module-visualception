@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: langn
- * Date: 14.10.14
- * Time: 13:25
- */
 
 namespace Codeception\Module;
 

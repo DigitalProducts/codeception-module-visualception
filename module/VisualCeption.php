@@ -75,6 +75,10 @@ class VisualCeption extends \Codeception\Module
         $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements);
 
         if (!is_null($deviationResult["deviationImage"])) {
+
+            // used for assertion counter in codeception / phpunit
+            $this->assertTrue(true);
+
             if ($deviationResult["deviation"] <= $this->maximumDeviation) {
                 $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
@@ -107,6 +111,10 @@ class VisualCeption extends \Codeception\Module
         $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements);
 
         if (!is_null($deviationResult["deviationImage"])) {
+
+            // used for assertion counter in codeception / phpunit
+            $this->assertTrue(true);
+
             if ($deviationResult["deviation"] > $this->maximumDeviation) {
                 $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);

@@ -27,13 +27,9 @@ class WriteCurrentImageCest
         {
             $currentImagePath = $exception->getCurrentImage();
 
-            if (is_file( $currentImagePath )) {
-                return true;
+            if (!is_file( $exception->getCurrentImage() )) {
+                throw new \PHPUnit_Framework_ExpectationFailedException("The screenshot was not saved successfully.");
             }
-
-            // @TODO: complete the test, if current.* image is written
-            $scenario->incomplete();
-            throw $exception;
         }
     }
 }
