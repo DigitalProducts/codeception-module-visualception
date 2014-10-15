@@ -10,13 +10,6 @@ class WriteCurrentImageCest
      */
     public function writeCurrentImageFile(WebGuy $I, $scenario)
     {
-        // #############################################################
-
-        // @TODO: complete the test, if current.* image is written
-        $scenario->incomplete();
-
-        // #############################################################
-
         $I->amOnPage("/VisualCeption/seeVisualChanges.php");
         $I->dontSeeVisualChanges("currentImageIdentifier", "#theblock");
 
