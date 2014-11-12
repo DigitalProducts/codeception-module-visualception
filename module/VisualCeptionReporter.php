@@ -31,6 +31,8 @@ class VisualCeptionReporter extends \Codeception\Module
 
     private function init()
     {
+        $this->debug("Initializing VisualCeptionReportt");
+
         $this->logFile = \Codeception\Configuration::logDir() . 'vcresult.html';
 
         if (array_key_exists('templateVars', $this->config)) {
@@ -42,8 +44,6 @@ class VisualCeptionReporter extends \Codeception\Module
         } else {
             $this->templateFile = __DIR__ . "/report/template.php";
         }
-
-
     }
 
     public function _beforeSuite()
@@ -53,6 +53,8 @@ class VisualCeptionReporter extends \Codeception\Module
         }
 
         $this->referenceImageDir = $this->getModule("VisualCeption")->getReferenceImageDir();
+
+        $this->debug( "VisualCeptionReporter: templateFile = " . $this->templateFile );
     }
 
     public function _afterSuite()
@@ -67,6 +69,7 @@ class VisualCeptionReporter extends \Codeception\Module
         $reportContent = ob_get_contents();
         ob_clean();
 
+        $this->debug("Trying to store file (".$this->logFile.")");
         file_put_contents($this->logFile, $reportContent);
     }
 
