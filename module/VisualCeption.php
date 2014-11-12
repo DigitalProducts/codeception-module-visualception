@@ -20,7 +20,6 @@ class VisualCeption extends \Codeception\Module
     private $referenceImageDir;
 
     private $maximumDeviation = 0;
-    private $saveCurrentImageIfFailure = false;
 
     private $webDriver = null;
     private $webDriverModule = null;
@@ -60,6 +59,11 @@ class VisualCeption extends \Codeception\Module
         $this->test = $test;
     }
 
+    public function getReferenceImageDir()
+    {
+        return $this->referenceImageDir;
+    }
+
     /**
      * Compare the reference image with a current screenshot, identified by their indentifier name
      * and their element ID.
@@ -82,11 +86,6 @@ class VisualCeption extends \Codeception\Module
             if ($deviationResult["deviation"] <= $this->maximumDeviation) {
                 $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
-
-                if ($this->saveCurrentImageIfFailure === true) {
-                    $saveCurrentImagePath = $this->getDeviationScreenshotPath($identifier, 'current');
-                    $deviationResult['currentImage']->writeImage($saveCurrentImagePath);
-                }
 
                 throw new ImageDeviationException("The deviation of the taken screenshot is too low (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.",
                     $this->getExpectedScreenshotPath($identifier),
@@ -118,11 +117,6 @@ class VisualCeption extends \Codeception\Module
             if ($deviationResult["deviation"] > $this->maximumDeviation) {
                 $compareScreenshotPath = $this->getDeviationScreenshotPath($identifier);
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
-
-                if ($this->saveCurrentImageIfFailure === true) {
-                    $saveCurrentImagePath = $this->getDeviationScreenshotPath($identifier, 'current.');
-                    $deviationResult['currentImage']->writeImage($saveCurrentImagePath);
-                }
 
                 throw new ImageDeviationException("The deviation of the taken screenshot is too hight (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.",
                     $this->getExpectedScreenshotPath($identifier),
@@ -176,8 +170,6 @@ class VisualCeption extends \Codeception\Module
         $this->createScreenshot($identifier, $coords, $excludeElements);
 
         $compareResult = $this->compare($identifier);
-
-        unlink($this->getScreenshotPath($identifier));
 
         $deviation = round($compareResult[1] * 100, 2);
 
@@ -366,7 +358,7 @@ class VisualCeption extends \Codeception\Module
     private function getDeviationScreenshotPath ($identifier, $alternativePrefix = '')
     {
         $debugDir = \Codeception\Configuration::logDir() . 'debug/';
-        $prefix = ( $alternativePrefix === '') ? 'compare.' : $alternativePrefix;
+        $prefix = ( $alternativePrefix === '') ? 'compare' : $alternativePrefix;
         return $debugDir . $prefix . $this->getScreenshotName($identifier);
     }
 
