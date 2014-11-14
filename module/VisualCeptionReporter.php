@@ -1,13 +1,5 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: langn
- * Date: 02.10.14
- * Time: 14:21
- *
- * /citools/tools/common/php/5.5.9/bin/php codecept.phar
- *
- * @todo config logfile
  *
  */
 
@@ -31,9 +23,13 @@ class VisualCeptionReporter extends \Codeception\Module
 
     private function init()
     {
-        $this->debug("Initializing VisualCeptionReportt");
+        $this->debug("Initializing VisualCeptionReport");
 
-        $this->logFile = \Codeception\Configuration::logDir() . 'vcresult.html';
+        if (array_key_exists('logFile', $this->config)) {
+            $this->logFile = $this->config["logFile"];
+        }else{
+            $this->logFile = \Codeception\Configuration::logDir() . 'vcresult.html';
+        }
 
         if (array_key_exists('templateVars', $this->config)) {
             $this->templateVars = $this->config["templateVars"];
