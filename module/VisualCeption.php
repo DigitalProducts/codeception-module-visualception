@@ -19,6 +19,12 @@ class VisualCeption extends \Codeception\Module
 
     private $referenceImageDir;
 
+    /**
+     * This var represents the directory where the taken images are stored
+     * @var string
+     */
+    private $currentImageDir;
+
     private $maximumDeviation = 0;
 
     private $webDriver = null;
@@ -209,6 +215,12 @@ class VisualCeption extends \Codeception\Module
             $this->debug("Creating directory: $this->referenceImageDir");
             mkdir($this->referenceImageDir, 0777, true);
         }
+
+        if (array_key_exists('currentImageDir', $this->config)) {
+            $this->currentImageDir = $this->config["currentImageDir"];
+        }else{
+            $this->currentImageDir = \Codeception\Configuration::logDir() . 'debug/tmp/';
+        }
     }
 
     /**
@@ -273,7 +285,7 @@ class VisualCeption extends \Codeception\Module
      */
     private function getScreenshotPath($identifier)
     {
-        $debugDir = \Codeception\Configuration::logDir() . 'debug/tmp/';
+        $debugDir = $this->currentImageDir;
         if (!is_dir($debugDir)) {
             $created = mkdir($debugDir, 0777, true);
             if ($created) {
@@ -306,7 +318,12 @@ class VisualCeption extends \Codeception\Module
      */
     private function createScreenshot($identifier, array $coords, array $excludeElements = array())
     {
-        $screenshotPath = \Codeception\Configuration::logDir() . 'debug/' . "fullscreenshot.tmp.png";
+        $screenShotDir = \Codeception\Configuration::logDir() . 'debug/';
+
+        if( !is_dir($screenShotDir)) {
+            mkdir($screenShotDir, 0777, true);
+        }
+        $screenshotPath = $screenShotDir . 'fullscreenshot.tmp.png';
         $elementPath = $this->getScreenshotPath($identifier);
 
         $this->hideElementsForScreenshot($excludeElements);
