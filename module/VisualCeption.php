@@ -210,15 +210,10 @@ class VisualCeption extends \Codeception\Module
             $this->saveCurrentImageIfFailure = (boolean) $this->config["saveCurrentImageIfFailure"];
         }
 
-        if (array_key_exists('referenceImageDir', $this->config)) {
-            $this->referenceImageDir = $this->config["referenceImageDir"];
-        } else {
-            $this->referenceImageDir = \Codeception\Configuration::dataDir() . 'VisualCeption/';
-        }
-
-        if (!is_dir($this->referenceImageDir)) {
-            $this->debug("Creating directory: $this->referenceImageDir");
-            mkdir($this->referenceImageDir, 0777, true);
+        if (array_key_exists('currentImageDir', $this->config)) {
+            $this->currentImageDir = $this->config["currentImageDir"];
+        }else{
+            $this->currentImageDir = \Codeception\Configuration::logDir() . 'debug/tmp/';
         }
 
         if (array_key_exists('storageStrategy', $this->config)) {
@@ -302,6 +297,7 @@ class VisualCeption extends \Codeception\Module
     {
         $debugDir = $this->currentImageDir;
         if (!is_dir($debugDir)) {
+            $this->debug("mkdir dbd" . $debugDir);
             $created = mkdir($debugDir, 0777, true);
             if ($created) {
                 $this->debug("Creating directory: $debugDir");
@@ -404,18 +400,9 @@ class VisualCeption extends \Codeception\Module
      */
     private function compare($identifier)
     {
-        $expectedImagePath = $this->getExpectedScreenshotPath($identifier);
-        $currentImagePath = $this->getScreenshotPath($identifier);
-
-        if (!file_exists($expectedImagePath)) {
-            $this->debug("Copying image (from $currentImagePath to $expectedImagePath");
-            copy($currentImagePath, $expectedImagePath);
-            return array (null, 0, 'currentImage' => null);
-        } else {
-            $expectedImage = $this->storageStrategy->getImage($identifier);
-            $currentImage = new \Imagick($currentImagePath);
-            return $this->compareImages($expectedImage, $currentImage);
-        }
+        $expectedImage = $this->storageStrategy->getImage($identifier);
+        $currentImage = new \Imagick($this->getScreenshotPath($identifier));
+        return $this->compareImages($expectedImage, $currentImage);
     }
 
     /**

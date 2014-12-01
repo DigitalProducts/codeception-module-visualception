@@ -1,6 +1,6 @@
 <?php
 
-class RemoteStorage {
+class RemoteStorage implements \Storage {
 
     private $storageServer;
 
@@ -12,11 +12,17 @@ class RemoteStorage {
 
     private function getStorageFile($identifier)
     {
-        return $this->storageServer . '/' . $this->userId . '/' . $identifier . ".png";
+        return $this->storageServer . '?userId=' . $this->userId . '&imageId=' . $identifier . ".png";
     }
 
     public function getImage($identifier) {
-        $image = file_get_contents($this->getStorageFile($identifier));
-        return new \Imagick($image);
+        // @todo use curl
+        $imageFile = $this->getStorageFile($identifier);
+        $imageContent = file_get_contents($imageFile);
+
+        $image = new \Imagick();
+        $image->readimageblob($imageContent);
+
+        return $image;
     }
 }
