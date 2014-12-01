@@ -31,6 +31,11 @@ class VisualCeption extends \Codeception\Module
     private $webDriverModule = null;
 
     /**
+     * @var \Storage
+     */
+    private $storageStrategy;
+
+    /**
      * Create an object from VisualCeption Class
      *
      * @param array $config
@@ -216,10 +221,20 @@ class VisualCeption extends \Codeception\Module
             mkdir($this->referenceImageDir, 0777, true);
         }
 
-        if (array_key_exists('currentImageDir', $this->config)) {
-            $this->currentImageDir = $this->config["currentImageDir"];
+        if (array_key_exists('storageStrategy', $this->config)) {
+            // @todo create a factory and use it
+            switch($this->config['storageStrategy']) {
+                case "RemoteStorage":
+                    $this->storageStrategy = new \RemoteStorage($this->config);
+                    break;
+                case "FileStorage":
+                    $this->storageStrategy = new \FileStorage($this->config);
+                    break;
+                default:
+                    throw new \Exception('The given storage strategy is not supported.');
+            }
         }else{
-            $this->currentImageDir = \Codeception\Configuration::logDir() . 'debug/tmp/';
+            $this->storageStrategy = new \FileStorage($this->config);
         }
     }
 
@@ -379,7 +394,6 @@ class VisualCeption extends \Codeception\Module
         return $debugDir . $prefix . $this->getScreenshotName($identifier);
     }
 
-
     /**
      * Compare two images by its identifiers.
      * If the reference image doesn't exists
@@ -398,7 +412,9 @@ class VisualCeption extends \Codeception\Module
             copy($currentImagePath, $expectedImagePath);
             return array (null, 0, 'currentImage' => null);
         } else {
-            return $this->compareImages($expectedImagePath, $currentImagePath);
+            $expectedImage = $this->storageStrategy->getImage($identifier);
+            $currentImage = new \Imagick($currentImagePath);
+            return $this->compareImages($expectedImage, $currentImage);
         }
     }
 
@@ -409,12 +425,9 @@ class VisualCeption extends \Codeception\Module
      * @param $image2 Path to the current image in the screenshot
      * @return array Result of the comparison
      */
-    private function compareImages($image1, $image2)
+    private function compareImages($imagick1, $imagick2)
     {
-        $this->debug("Trying to compare $image1 with $image2");
-
-        $imagick1 = new \Imagick($image1);
-        $imagick2 = new \Imagick($image2);
+        $this->debug("Trying to compare images.");
 
         $imagick1Size = $imagick1->getImageGeometry();
         $imagick2Size = $imagick2->getImageGeometry();
