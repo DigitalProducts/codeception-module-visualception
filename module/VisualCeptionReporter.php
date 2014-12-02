@@ -38,7 +38,7 @@ class VisualCeptionReporter extends \Codeception\Module
         if (array_key_exists('templateFile', $this->config)) {
             $this->templateFile = $this->config["templateFile"];
         } else {
-            $this->templateFile = __DIR__ . "/report/template.php";
+            $this->templateFile = __DIR__ . "/Report/template.php";
         }
     }
 
@@ -48,8 +48,6 @@ class VisualCeptionReporter extends \Codeception\Module
             throw new \Exception("VisualCeptionReporter uses VisualCeption. Please be sure that this module is activated.");
         }
 
-        $this->referenceImageDir = $this->getModule("VisualCeption")->getReferenceImageDir();
-
         $this->debug( "VisualCeptionReporter: templateFile = " . $this->templateFile );
     }
 
@@ -58,6 +56,7 @@ class VisualCeptionReporter extends \Codeception\Module
         $failedTests = $this->failed;
         $vars = $this->templateVars;
         $referenceImageDir = $this->referenceImageDir;
+
         $i = 0;
 
         ob_start();

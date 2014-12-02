@@ -4,3 +4,8 @@
 .idea/
 .idea/*
 .idea
+
+.DS_Store
+._.DS_Store
+test/integration/tests/_log/
+test/integration/tests/acceptance/WebGuy.php
