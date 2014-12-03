@@ -16,7 +16,7 @@ class Manipulation
      */
     private function injectJQuery()
     {
-        $jQueryString = file_get_contents(__DIR__ . "/../jquery.js");
+        $jQueryString = file_get_contents(__DIR__ . "/jquery.js");
         $this->webDriver->executeScript($jQueryString);
         $this->webDriver->executeScript('jQuery.noConflict();');
     }

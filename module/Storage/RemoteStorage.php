@@ -10,9 +10,9 @@ class RemoteStorage implements \Storage {
         $this->storageServer = $config["expectedImageServer"];
     }
 
-    private function getStorageFile($identifier)
+    public function getStorageFile($identifier)
     {
-        return $this->storageServer . '?userId=' . $this->userId . '&imageId=' . $identifier . ".png";
+        return $this->storageServer . '?userId=' . $this->userId . '&imageId=' . $identifier;
     }
 
     public function getImage($identifier) {

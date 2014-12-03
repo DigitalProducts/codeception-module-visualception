@@ -6,11 +6,13 @@ class ImageDeviationException extends \PHPUnit_Framework_ExpectationFailedExcept
 {
     private $result;
     private $storage;
+    private $identifier;
 
-    public function __construct($message, \ComparisonResult $comparisonResult, \Storage $storage)
+    public function __construct($message, \ComparisonResult $comparisonResult, \Storage $storage, $identifier = "leer")
     {
         $this->result = $comparisonResult;
         $this->storage = $storage;
+        $this->identifier = $identifier;
 
         parent::__construct($message);
     }
@@ -23,5 +25,10 @@ class ImageDeviationException extends \PHPUnit_Framework_ExpectationFailedExcept
     public function getStorage()
     {
         return $this->storage;
+    }
+
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 }
