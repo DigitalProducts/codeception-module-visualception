@@ -34,3 +34,4 @@ modules:
             userId: bwhBR4WBEFJHBW
 
         VisualCeptionReporter:
+            templateFile: "/app1/ela/var/www/app/vc.digital/current/module/Report/ci_template.php"

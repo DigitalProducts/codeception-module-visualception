@@ -8,6 +8,7 @@ include_once __DIR__."/../../../module/ImageDeviationException.php";
 
 include_once __DIR__."/../../../module/VisualCeptionReporter.php";
 
+include_once __DIR__."/../../../module/Storage/Factory.php";
 include_once __DIR__."/../../../module/Storage/Storage.php";
 include_once __DIR__."/../../../module/Storage/FileStorage.php";
 include_once __DIR__."/../../../module/Storage/RemoteStorage.php";
