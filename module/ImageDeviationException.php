@@ -4,31 +4,34 @@ namespace Codeception\Module;
 
 class ImageDeviationException extends \PHPUnit_Framework_ExpectationFailedException
 {
-    private $expectedImage;
-    private $currentImage;
-    private $deviationImage;
+    private $result;
+    private $storage;
+    private $identifier;
 
-    public function __construct($message, $expectedImage, $currentImage, $deviationImage)
+    public function __construct($message, \ComparisonResult $comparisonResult, \Storage $storage, $identifier = "leer")
     {
-        $this->deviationImage = $deviationImage;
-        $this->currentImage = $currentImage;
-        $this->expectedImage = $expectedImage;
+        $this->result = $comparisonResult;
+        $this->storage = $storage;
+        $this->identifier = $identifier;
 
         parent::__construct($message);
     }
 
-    public function getDeviationImage( )
+    /**
+     * @return \ComparisonResult
+     */
+    public function getComparisonResult()
     {
-        return $this->deviationImage;
+        return $this->result;
     }
 
-    public function getCurrentImage()
+    public function getStorage()
     {
-        return $this->currentImage;
+        return $this->storage;
     }
 
-    public function getExpectedImage()
+    public function getIdentifier()
     {
-        return $this->expectedImage;
+        return $this->identifier;
     }
 }

@@ -14,14 +14,27 @@ modules:
         - WebDriver
         - WebHelper
         - VisualCeption
+        - VisualCeptionReporter
     config:
         WebDriver:
             url: http://www.thewebhatesme.com
-            browser: phantomjs
-            host: localhost
+            #browser: phantomjs
+            browser: firefox
+            #host: localhost
+            host: 10.100.23.11
             port: 4444
             capabilities:
                 webStorageEnabled: true
         VisualCeption:
             maximumDeviation: 0
-            saveCurrentImageIfFailure: true
+            storageStrategy: RemoteStorage
+            expectedImageServer: http://wordpress.ci.guj.de/tools/visualception/image.php
+            userId: bwhBR4WBEFJHBW
+
+        VisualCeptionReporter:
+            reporter:
+              class: CIReporter
+              templateFile: /app1/ela/var/www/app/vc.digital/current/module/Report/ci_template.php
+              logFile: tests/_log/vcci.html
+              #class: FileReporter
+              #currentImageDir: /tmp/currentImages

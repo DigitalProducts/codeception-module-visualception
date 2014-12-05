@@ -2,7 +2,7 @@
 Visual regression tests integrated in [Codeception](http://codeception.com/).
 
 [![Build Status](https://travis-ci.org/DigitalProducts/codeception-module-visualception.svg?branch=master)](https://travis-ci.org/DigitalProducts/codeception-module-visualception)
-
+ 
 This module can be used to compare the current representation of a website element with an expeted. It was written on the shoulders of codeception and integrates in a very easy way.
 
 **Example**
