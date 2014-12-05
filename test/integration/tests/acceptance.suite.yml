@@ -27,11 +27,14 @@ modules:
                 webStorageEnabled: true
         VisualCeption:
             maximumDeviation: 0
-            saveCurrentImageIfFailure: true
-
             storageStrategy: RemoteStorage
             expectedImageServer: http://wordpress.ci.guj.de/tools/visualception/image.php
             userId: bwhBR4WBEFJHBW
 
         VisualCeptionReporter:
-            templateFile: "/app1/ela/var/www/app/vc.digital/current/module/Report/ci_template.php"
+            reporter:
+              class: CIReporter
+              templateFile: /app1/ela/var/www/app/vc.digital/current/module/Report/ci_template.php
+              logFile: tests/_log/vcci.html
+              #class: FileReporter
+              #currentImageDir: /tmp/currentImages

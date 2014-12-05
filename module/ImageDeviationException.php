@@ -17,6 +17,9 @@ class ImageDeviationException extends \PHPUnit_Framework_ExpectationFailedExcept
         parent::__construct($message);
     }
 
+    /**
+     * @return \ComparisonResult
+     */
     public function getComparisonResult()
     {
         return $this->result;

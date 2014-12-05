@@ -18,3 +18,7 @@ include_once __DIR__."/../../../module/Html/Screenshot.php";
 
 include_once __DIR__."/../../../module/Image/Comparison.php";
 include_once __DIR__."/../../../module/Image/ComparisonResult.php";
+
+include_once __DIR__."/../../../module/Report/Reporter.php";
+include_once __DIR__."/../../../module/Report/FileReporter.php";
+include_once __DIR__."/../../../module/Report/CIReporter.php";
