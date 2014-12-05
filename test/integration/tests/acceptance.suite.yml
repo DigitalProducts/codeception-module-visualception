@@ -34,7 +34,7 @@ modules:
         VisualCeptionReporter:
             reporter:
               class: CIReporter
-              templateFile: /app1/ela/var/www/app/vc.digital/current/module/Report/ci_template.php
+              templateFile: /app1/ela/var/www/app/vc.digital/current/module/Report/templates/ci.php
               logFile: tests/_log/vcci.html
               #class: FileReporter
               #currentImageDir: /tmp/currentImages
