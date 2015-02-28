@@ -33,6 +33,7 @@ VisualCeption needs the following components to run:
 Add the module to <code>_bootstrap.php</code>. 
 
 <code>include_once "/path/to/module/VisualCeption.php";</code>
+<code>include_once "/path/to/module/ImageDeviationException.php";</code>
 
 ### Configuration
 
