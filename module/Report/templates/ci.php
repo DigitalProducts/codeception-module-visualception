@@ -13,14 +13,23 @@
 
     <body style="margin:0; padding: 0; background-color: white">
 
-        <div style="margin-bottom: 100px; padding-top: 50px; text-align: center; width: 100%; background-color: #db5179; height: 150px"><img src="http://drupal.eltern.de/sites/all/themes/cp_eltern/logo.png"></div>
+        <div style="margin-bottom: 50px; padding-top: 50px; text-align: center; width: 100%; background-color: <?php echo $vars['color']; ?>; height: 150px">
+            <?php if(file_exists($vars['logo']) || parse_url($vars['logo'] !== false) ): ?>
+            <img src="<?php echo $vars['logo']; ?>">
+            <? endif; ?>
+        </div>
 
         <div style="margin: 0 auto; width: 1200px">
 
-            <p style="margin-bottom: 100px; font-family: verdana; line-height: 21px; color: #AAA; font-size: 12px">
-                Dieser Report wurde mit VisualCeption erstellt. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        <?php if(!empty($vars['text'])): ?>
+            <p style="margin-bottom: 50px; font-family: verdana; line-height: 21px; color: #AAA; font-size: 12px">
+                <?php echo htmlentities($vars['text']); ?>
+                <br/>
+                <small>Dieser Report wurde mit VisualCeption erstellt.</small>
             </p>
+        <?php endif; ?>
 
+        <?php if (!empty($failedTests)): ?>
         <?php foreach ($failedTests as $failedTest): ?>
 
             <div class="twentytwenty-container">
@@ -35,6 +44,11 @@
             </div>
 
         <?php endforeach; ?>
+        <?php else: ?>
+            <div style="width: 100%; text-align: center; border-bottom: 1px solid #AAA; padding-bottom: 75px; margin-top: 75px; margin-bottom: 75px" >
+                ALLE TESTS FEHLERFREI
+            </div>
+        <?php endif; ?>
 
         <script>
             function updateExpectedImage(imageUrl, identifier)
@@ -47,7 +61,6 @@
             }
         </script>
 
-        <!--script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script-->
         <script type="text/javascript"><?php @include(__DIR__."/helper/js/jquery.event.move.js"); ?></script>
         <script type="text/javascript"><?php @include(__DIR__."/helper/js/jquery.twentytwenty.js"); ?></script>
         <script>

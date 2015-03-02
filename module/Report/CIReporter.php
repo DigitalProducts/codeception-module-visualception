@@ -8,10 +8,15 @@ class CIReporter implements Reporter {
 
     private $templateFile;
     private $templateVars = array();
+    private $defaultTemplateVars = array(
+        'logo' => 'http://www.thewebhatesme.com/VisualCeption/compare.png',
+        'color' => '#e5e6e6',
+        'text' => '',
+    );
 
     public function __construct(array $config)
     {
-        $this->templateVars = $config["templateVars"];
+        $this->templateVars = array_merge( $this->defaultTemplateVars, (array) $config["templateVars"] );
         $this->templateFile = $config["templateFile"];
         $this->logFile = $config["logFile"];
     }
@@ -25,8 +30,6 @@ class CIReporter implements Reporter {
     {
         $failedTests = $this->failures;
         $vars = $this->templateVars;
-
-        //var_dump( $this->templateFile);
 
         ob_start();
 
