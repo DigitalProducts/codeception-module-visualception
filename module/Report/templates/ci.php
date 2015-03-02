@@ -3,11 +3,11 @@
 <head>
     <title>VisualCeption Report</title>
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+    <script type="text/javascript"><?php @include(__DIR__."/helper/js/jquery.min.js"); ?></script>
 
-    <link href="http://wordpress.ci.guj.de/tools/slider2/css/foundation.css" rel="stylesheet" type="text/css" />
-    <link href="http://wordpress.ci.guj.de/tools/slider2/css/twentytwenty.css" rel="stylesheet" type="text/css" />
+    <style type="text/css"><?php @include(__DIR__."/helper/css/openSans.css"); ?></style>
+    <style type="text/css"><?php @include(__DIR__."/helper/css/foundation.css"); ?></style>
+    <style type="text/css"><?php @include(__DIR__."/helper/css/twentytwenty.css"); ?></style>
 
 </head>
 
@@ -48,8 +48,8 @@
         </script>
 
         <!--script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script-->
-        <script src="http://wordpress.ci.guj.de/tools/slider2/js/jquery.event.move.js"></script>
-        <script src="http://wordpress.ci.guj.de/tools/slider2/js/jquery.twentytwenty.js"></script>
+        <script type="text/javascript"><?php @include(__DIR__."/helper/js/jquery.event.move.js"); ?></script>
+        <script type="text/javascript"><?php @include(__DIR__."/helper/js/jquery.twentytwenty.js"); ?></script>
         <script>
             $(window).load(function(){
                 $(".twentytwenty-container[data-orientation!='vertical']").twentytwenty({default_offset_pct: 0.5});
