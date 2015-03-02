@@ -14,8 +14,5 @@ require_once __DIR__.'/Image/ComparisonResult.php';
 require_once __DIR__.'/Report/Reporter.php';
 require_once __DIR__.'/Report/CIReporter.php';
 require_once __DIR__.'/Report/FileReporter.php';
-require_once __DIR__.'/Report/templates/ci.php';
-require_once __DIR__.'/Report/templates/template.php';
-require_once __DIR__.'/Report/templates/ci_template.php';
 
 
