@@ -25,14 +25,16 @@ modules:
                 webStorageEnabled: true
         VisualCeption:
             maximumDeviation: 0
-            storageStrategy: RemoteStorage
-            expectedImageServer: http://wordpress.ci.guj.de/tools/visualception/image.php
-            userId: bwhBR4WBEFJHBW
+            storageStrategy: FileStorage
+            expectedImageDir: /tmp/expectedImages
+            # storageStrategy: RemoteStorage
+            # expectedImageServer: http://wordpress.ci.guj.de/tools/visualception/image.php
+            # userId: bwhBR4WBEFJHBW
 
         VisualCeptionReporter:
             reporter:
-              #class: CIReporter
-              #templateFile: /home/travis/build/DigitalProducts/codeception-module-visualception/module/Report/templates/ci.php
-              #logFile: tests/_log/vcci.html
-              class: FileReporter
-              currentImageDir: /tmp/currentImages
+              class: CIReporter
+              templateFile: /home/travis/build/DigitalProducts/codeception-module-visualception/module/Report/templates/ci.php
+              logFile: tests/_log/vcci.html
+              #class: FileReporter
+              #currentImageDir: /tmp/currentImages
