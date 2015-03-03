@@ -16,7 +16,8 @@ class CIReporter implements Reporter {
 
     public function __construct(array $config)
     {
-        $this->templateVars = array_merge( $this->defaultTemplateVars, (array) $config["templateVars"] );
+
+        $this->templateVars = is_array($config['templateVars']) ? array_merge( $this->defaultTemplateVars, (array) $config["templateVars"] ) : $this->defaultTemplateVars;
         $this->templateFile = $config["templateFile"];
         $this->logFile = $config["logFile"];
     }

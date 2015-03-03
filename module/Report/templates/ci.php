@@ -16,7 +16,7 @@
         <div style="margin-bottom: 50px; padding-top: 50px; text-align: center; width: 100%; background-color: <?php echo $vars['color']; ?>; height: 150px">
             <?php if(file_exists($vars['logo']) || parse_url($vars['logo'] !== false) ): ?>
             <img src="<?php echo $vars['logo']; ?>">
-            <? endif; ?>
+            <?php endif; ?>
         </div>
 
         <div style="margin: 0 auto; width: 1200px">
