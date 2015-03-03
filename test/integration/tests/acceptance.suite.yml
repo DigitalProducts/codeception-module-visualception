@@ -18,10 +18,8 @@ modules:
     config:
         WebDriver:
             url: http://www.thewebhatesme.com
-            #browser: phantomjs
-            browser: firefox
+            browser: phantomjs
             host: localhost
-            #host: 10.100.23.11
             port: 4444
             capabilities:
                 webStorageEnabled: true
@@ -34,7 +32,6 @@ modules:
         VisualCeptionReporter:
             reporter:
               class: CIReporter
-              # templateFile: /app1/ela/var/www/app/vc.digital/current/module/Report/templates/ci.php
               templateFile: /home/travis/build/DigitalProducts/codeception-module-visualception/module/Report/templates/ci.php
               logFile: tests/_log/vcci.html
               #class: FileReporter
