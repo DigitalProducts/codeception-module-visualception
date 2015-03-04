@@ -32,9 +32,9 @@ env:
         modules:
             config:
                 WebDriver:
-                    browser: 'phantomjs'
+                    browser: phantomjs
                     host: localhost
-                    port: 444
+                    port: 4444
             VisualCeptionReporter:
                 reporter:
                   class: NullReporter
