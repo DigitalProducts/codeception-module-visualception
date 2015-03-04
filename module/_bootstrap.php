@@ -17,5 +17,6 @@ include_once __DIR__."/Image/Comparison.php";
 include_once __DIR__."/Image/ComparisonResult.php";
 
 include_once __DIR__."/Report/Reporter.php";
+include_once __DIR__."/Report/NullReporter.php";
 include_once __DIR__."/Report/FileReporter.php";
 include_once __DIR__."/Report/CIReporter.php";
