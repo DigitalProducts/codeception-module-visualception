@@ -17,6 +17,10 @@ class FileStorage implements \Storage {
         } else {
             $this->storageDir = \Codeception\Configuration::dataDir() . 'VisualCeption/expected/';
         }
+
+        if( !is_dir($this->storageDir) ) {
+            mkdir( $this->storageDir, 0777, true);
+        }
     }
 
     /**
@@ -39,11 +43,6 @@ class FileStorage implements \Storage {
     public function getImage($identifier)
     {
         $imageFile = $this->getStorageFile($identifier);
-        if( !file_exists($imageFile)) {
-            $image = new \Imagick();
-            $image->newImage(1, 1, new ImagickPixel('white'));
-            return $image;
-        }
         return new \Imagick($imageFile);
     }
 
@@ -51,5 +50,9 @@ class FileStorage implements \Storage {
     {
         $filename = $this->getStorageFile($identifier);
         return $image->writeImage($filename);
+    }
+
+    public function hasImage($identifier) {
+        return file_exists($this->getStorageFile($identifier));
     }
 }

@@ -2,34 +2,35 @@
 
 use Codeception\Module\ImageDeviationException;
 
-class CIReporter implements Reporter {
+class CIReporter implements Reporter
+{
 
-    private $failures = array();
+    private $failues = array();
 
     private $templateFile;
     private $templateVars = array();
-    private $defaultTemplateVars = array(
-        'logo' => 'http://www.thewebhatesme.com/VisualCeption/compare.png',
-        'color' => '#e5e6e6',
-        'text' => '',
-    );
 
     public function __construct(array $config)
     {
-
-        $this->templateVars = is_array($config['templateVars']) ? array_merge( $this->defaultTemplateVars, (array) $config["templateVars"] ) : $this->defaultTemplateVars;
-        $this->templateFile = $config["templateFile"];
-        $this->logFile = $config["logFile"];
+        if (array_key_exists('templateVars', $config)) {
+            $this->templateVars = $config["templateVars"];
+        }
+        if (array_key_exists('templateFile', $config)) {
+            $this->templateFile = $config["templateFile"];
+        }
+        if (array_key_exists('logFile', $config)) {
+            $this->logFile = $config["logFile"];
+        }
     }
 
     public function processFailure(ImageDeviationException $exception)
     {
-        $this->failures[] = $exception;
+        $this->failues[] = $exception;
     }
 
     public function finish()
     {
-        $failedTests = $this->failures;
+        $failedTests = $this->failues;
         $vars = $this->templateVars;
 
         ob_start();

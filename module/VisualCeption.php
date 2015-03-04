@@ -81,7 +81,7 @@ class VisualCeption extends \Codeception\Module
     {
         $comparisonResult = $this->getVisualChanges($identifier, $elementId, (array)$excludedElements);
 
-        if($comparisonResult->getDeviation() <= $this->maximumDeviation ) {
+        if($comparisonResult !== false && $comparisonResult->getDeviation() <= $this->maximumDeviation ) {
             $this->assertTrue(true);
             throw new ImageDeviationException("The deviation of the taken screenshot is too low (" . $comparisonResult->getDeviation() . "%)",
                 $comparisonResult, $this->storageStrategy, $identifier);
@@ -100,7 +100,7 @@ class VisualCeption extends \Codeception\Module
     {
         $comparisonResult = $this->getVisualChanges($identifier, $elementId, (array)$excludedElements);
 
-        if($comparisonResult->getDeviation() > $this->maximumDeviation ) {
+        if($comparisonResult !== false && $comparisonResult->getDeviation() > $this->maximumDeviation ) {
             $this->assertTrue(true);
             throw new ImageDeviationException("The deviation of the taken screenshot is too high (" . $comparisonResult->getDeviation() . "%)",
                 $comparisonResult, $this->storageStrategy, $identifier);
@@ -109,9 +109,18 @@ class VisualCeption extends \Codeception\Module
 
     private function getVisualChanges($identifier, $elementId, array $excludedElements)
     {
-        $expectedImage = $this->storageStrategy->getImage($identifier);
         $currentImage = $this->getCurrentImage($excludedElements, $elementId);
-        return $this->getComparisonResult($expectedImage, $currentImage);
+
+        if( $this->storageStrategy->hasImage($identifier)) {
+            $expectedImage = $this->storageStrategy->getImage($identifier);
+            return $this->getComparisonResult($expectedImage, $currentImage);
+        }else{
+            // If the image does not exist the current image will be set as expected. the test will succeed.
+            // This can depend on the storage strategy that is used.
+            $expectedImage = $currentImage;
+            $this->storageStrategy->setImage($currentImage, $identifier);
+            return false;
+        }
     }
 
     private function getComparisonResult(\Imagick $expectedImage, \Imagick $currentImage)

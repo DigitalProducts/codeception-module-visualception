@@ -1,5 +1,4 @@
 # Codeception Test Suite Configuration
-
 # suite for acceptance tests.
 # perform tests in browser using the Selenium-like tools.
 # powered by Mink (http://mink.behat.org).
@@ -23,18 +22,30 @@ modules:
             port: 4444
             capabilities:
                 webStorageEnabled: true
+
         VisualCeption:
             maximumDeviation: 0
             storageStrategy: FileStorage
-            expectedImageDir: /tmp/expectedImages
-            # storageStrategy: RemoteStorage
-            # expectedImageServer: http://wordpress.ci.guj.de/tools/visualception/image.php
-            # userId: bwhBR4WBEFJHBW
 
-        VisualCeptionReporter:
-            reporter:
-              #class: CIReporter
-              #templateFile: /home/travis/build/DigitalProducts/codeception-module-visualception/module/Report/templates/ci.php
-              #logFile: tests/_log/vcci.html
-              class: FileReporter
-              currentImageDir: /tmp/currentImages
+env:
+    travis:
+        modules:
+            config:
+                WebDriver:
+                    browser: phantomjs
+                    host: localhost
+                    port: 4444
+            VisualCeptionReporter:
+                reporter:
+                  class: NullReporter
+
+    nla:
+        modules:
+            config:
+                WebDriver:
+                    browser: 'firefox'
+                    host: '10.150.92.39'
+                    port: 4444
+                VisualCeptionReporter:
+                    reporter:
+                        class: NullReporter

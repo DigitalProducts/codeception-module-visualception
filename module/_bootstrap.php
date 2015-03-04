@@ -1,18 +1,21 @@
 <?php
 
-require_once __DIR__.'/VisualCeption.php';
-require_once __DIR__.'/VisualCeptionReporter.php';
-require_once __DIR__.'/ImageDeviationException.php';
-require_once __DIR__.'/Storage/Factory.php';
-require_once __DIR__.'/Storage/Storage.php';
-require_once __DIR__.'/Storage/FileStorage.php';
-require_once __DIR__.'/Storage/RemoteStorage.php';
-require_once __DIR__.'/Html/Manipulation.php';
-require_once __DIR__.'/Html/Screenshot.php';
-require_once __DIR__.'/Image/Comparison.php';
-require_once __DIR__.'/Image/ComparisonResult.php';
-require_once __DIR__.'/Report/Reporter.php';
-require_once __DIR__.'/Report/CIReporter.php';
-require_once __DIR__.'/Report/FileReporter.php';
+include_once __DIR__."/VisualCeption.php";
+include_once __DIR__."/ImageDeviationException.php";
 
+include_once __DIR__."/VisualCeptionReporter.php";
 
+include_once __DIR__."/Storage/Factory.php";
+include_once __DIR__."/Storage/Storage.php";
+include_once __DIR__."/Storage/FileStorage.php";
+include_once __DIR__."/Storage/RemoteStorage.php";
+
+include_once __DIR__."/Html/Manipulation.php";
+include_once __DIR__."/Html/Screenshot.php";
+
+include_once __DIR__."/Image/Comparison.php";
+include_once __DIR__."/Image/ComparisonResult.php";
+
+include_once __DIR__."/Report/Reporter.php";
+include_once __DIR__."/Report/NullReporter.php";
+include_once __DIR__."/Report/CIReporter.php";
