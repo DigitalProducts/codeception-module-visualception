@@ -35,6 +35,7 @@ env:
                     browser: phantomjs
                     host: localhost
                     port: 4444
+
             VisualCeptionReporter:
                 reporter:
                   class: NullReporter
@@ -46,6 +47,7 @@ env:
                     browser: 'firefox'
                     host: '10.150.92.39'
                     port: 4444
+
                 VisualCeptionReporter:
                     reporter:
                         class: NullReporter

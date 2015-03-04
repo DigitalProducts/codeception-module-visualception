@@ -1,6 +1,7 @@
 <?php
 
 namespace Codeception\Module;
+
 use Codeception\Module\ImageDeviationException;
 
 /**
@@ -81,7 +82,7 @@ class VisualCeption extends \Codeception\Module
     {
         $comparisonResult = $this->getVisualChanges($identifier, $elementId, (array)$excludedElements);
 
-        if($comparisonResult !== false && $comparisonResult->getDeviation() <= $this->maximumDeviation ) {
+        if ($comparisonResult !== false && $comparisonResult->getDeviation() <= $this->maximumDeviation) {
             $this->assertTrue(true);
             throw new ImageDeviationException("The deviation of the taken screenshot is too low (" . $comparisonResult->getDeviation() . "%)",
                 $comparisonResult, $this->storageStrategy, $identifier);
@@ -100,7 +101,7 @@ class VisualCeption extends \Codeception\Module
     {
         $comparisonResult = $this->getVisualChanges($identifier, $elementId, (array)$excludedElements);
 
-        if($comparisonResult !== false && $comparisonResult->getDeviation() > $this->maximumDeviation ) {
+        if ($comparisonResult !== false && $comparisonResult->getDeviation() > $this->maximumDeviation) {
             $this->assertTrue(true);
             throw new ImageDeviationException("The deviation of the taken screenshot is too high (" . $comparisonResult->getDeviation() . "%)",
                 $comparisonResult, $this->storageStrategy, $identifier);
@@ -111,14 +112,15 @@ class VisualCeption extends \Codeception\Module
     {
         $currentImage = $this->getCurrentImage($excludedElements, $elementId);
 
-        if( $this->storageStrategy->hasImage($identifier)) {
+        if ($this->storageStrategy->hasImage($identifier)) {
             $expectedImage = $this->storageStrategy->getImage($identifier);
             return $this->getComparisonResult($expectedImage, $currentImage);
-        }else{
+        } else {
             // If the image does not exist the current image will be set as expected. the test will succeed.
             // This can depend on the storage strategy that is used.
             $expectedImage = $currentImage;
             $this->storageStrategy->setImage($currentImage, $identifier);
+            $this->debug('Storing image (identifier: ' . $identifier . ')');
             return false;
         }
     }
