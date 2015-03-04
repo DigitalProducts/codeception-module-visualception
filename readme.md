@@ -1,4 +1,4 @@
-# VisualCeption
+# VisualCeption2
 Visual regression tests integrated in [Codeception](http://codeception.com/).
 
 [![Build Status](https://travis-ci.org/DigitalProducts/codeception-module-visualception.svg?branch=2.0)](https://travis-ci.org/DigitalProducts/codeception-module-visualception)
