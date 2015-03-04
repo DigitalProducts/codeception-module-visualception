@@ -30,3 +30,20 @@ modules:
         VisualCeptionReporter:
             reporter:
               class: NullReporter
+
+env:
+    travis:
+        modules:
+            config:
+                WebDriver:
+                    browser: 'phantomjs'
+                    host: localhost
+                    port: 444
+
+    nla:
+        modules:
+            config:
+                WebDriver:
+                    browser: firefox
+                    host: 10.150.92.39
+                    port: 4444
