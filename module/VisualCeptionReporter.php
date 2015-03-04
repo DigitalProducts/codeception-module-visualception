@@ -23,7 +23,7 @@ class VisualCeptionReporter extends \Codeception\Module
         if (array_key_exists('reporter', $this->config)) {
             $this->setReporter($this->config["reporter"]);
         } else {
-            $this->setReporter('NullReporter', null);
+            $this->setReporter(array('class' => 'NullReporter'), null);
         }
     }
 
