@@ -19,7 +19,10 @@ class VisualCeptionReporter extends \Codeception\Module
     private function init()
     {
         $this->debug("Initializing VisualCeptionReport");
-        $this->setReporter($this->config["reporter"]);
+
+        if( array_key_exists( 'reporter', $this->config )) {
+            $this->setReporter($this->config["reporter"]);
+        }
     }
 
     private function setReporter($config)
