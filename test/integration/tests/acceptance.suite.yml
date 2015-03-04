@@ -17,19 +17,16 @@ modules:
     config:
         WebDriver:
             url: http://www.thewebhatesme.com
-            browser: firefox
-            host: 10.100.23.11
+            browser: phantomjs
+            host: localhost
             port: 4444
             capabilities:
                 webStorageEnabled: true
+
         VisualCeption:
             maximumDeviation: 0
-            storageStrategy: RemoteStorage
-            expectedImageServer: http://wordpress.ci.guj.de/tools/visualception/image.php
-            userId: bwhBR4WBEFJHBW
+            storageStrategy: FileStorage
 
         VisualCeptionReporter:
             reporter:
-              class: CIReporter
-              templateFile: /app1/ela/var/www/app/vc.digital/current/module/Report/templates/ci.php
-              logFile: tests/_log/vcci.html
+              class: NullReporter

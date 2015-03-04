@@ -22,4 +22,4 @@ before_script:
   - mkdir tests/_log
   - php codecept${CODECEPT_VERSION}.phar build
 
-script: php codecept${CODECEPT_VERSION}.phar run -d travis
+script: php codecept${CODECEPT_VERSION}.phar run -d
