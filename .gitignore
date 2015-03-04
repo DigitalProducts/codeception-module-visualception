@@ -5,7 +5,7 @@
 .idea/*
 .idea
 
-tests/_data/
+test/integration/tests/_data/
 
 .DS_Store
 ._.DS_Store
