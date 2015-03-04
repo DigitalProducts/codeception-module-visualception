@@ -15,6 +15,10 @@ class RemoteStorage implements \Storage {
         return $this->storageServer . '?userId=' . $this->userId . '&imageId=' . $identifier;
     }
 
+    public function hasImage($identifier) {
+        return true;
+    }
+
     public function getImage($identifier) {
         // @todo use curl
         $imageFile = $this->getStorageFile($identifier);
