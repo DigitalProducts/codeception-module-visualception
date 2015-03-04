@@ -27,10 +27,6 @@ modules:
             maximumDeviation: 0
             storageStrategy: FileStorage
 
-        VisualCeptionReporter:
-            reporter:
-              class: NullReporter
-
 env:
     travis:
         modules:
@@ -39,11 +35,17 @@ env:
                     browser: 'phantomjs'
                     host: localhost
                     port: 444
+            VisualCeptionReporter:
+                reporter:
+                  class: NullReporter
 
     nla:
         modules:
             config:
                 WebDriver:
-                    browser: firefox
-                    host: 10.150.92.39
+                    browser: 'firefox'
+                    host: '10.150.92.39'
                     port: 4444
+                VisualCeptionReporter:
+                    reporter:
+                        class: NullReporter
