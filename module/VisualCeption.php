@@ -54,6 +54,8 @@ class VisualCeption extends \Codeception\Module
         }
 
         $this->storageStrategy = \Factory::getStorage($this->config);
+        $this->debug('Storage Strategy: ' . get_class($this->storageStrategy ) );
+        $this->debug('Maximum Deviation: ' . $this->maximumDeviation );
     }
 
     /**

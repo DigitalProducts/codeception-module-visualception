@@ -31,6 +31,8 @@ class VisualCeptionReporter extends \Codeception\Module
     {
         $reporterClass = $config['class'];
         $this->reporter = new $reporterClass($config);
+
+        $this->debug('Reporter: ' . get_class($this->reporter));
     }
 
     public function _beforeSuite($settings = array())
