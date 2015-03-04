@@ -1,5 +1,4 @@
 # Codeception Test Suite Configuration
-acceptance.suite.yml
 # suite for acceptance tests.
 # perform tests in browser using the Selenium-like tools.
 # powered by Mink (http://mink.behat.org).
