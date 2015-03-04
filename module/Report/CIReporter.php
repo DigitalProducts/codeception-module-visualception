@@ -2,7 +2,8 @@
 
 use Codeception\Module\ImageDeviationException;
 
-class CIReporter implements Reporter {
+class CIReporter implements Reporter
+{
 
     private $failues = array();
 
@@ -11,9 +12,15 @@ class CIReporter implements Reporter {
 
     public function __construct(array $config)
     {
-        $this->templateVars = $config["templateVars"];
-        $this->templateFile = $config["templateFile"];
-        $this->logFile = $config["logFile"];
+        if (array_key_exists('templateVars', $config)) {
+            $this->templateVars = $config["templateVars"];
+        }
+        if (array_key_exists('templateFile', $config)) {
+            $this->templateFile = $config["templateFile"];
+        }
+        if (array_key_exists('logFile', $config)) {
+            $this->logFile = $config["logFile"];
+        }
     }
 
     public function processFailure(ImageDeviationException $exception)
@@ -25,8 +32,6 @@ class CIReporter implements Reporter {
     {
         $failedTests = $this->failues;
         $vars = $this->templateVars;
-
-        var_dump( $this->templateFile);
 
         ob_start();
 
