@@ -1,0 +1,16 @@
+{
+    "name": "nubium/visualception",
+    "description": "Compare current website with its expected visual representation.",
+    "require": {
+        "codeception/codeception": "~2.0"
+    },
+    "authors": [
+        {
+            "name": "Ondrej Hatala",
+            "email": "ondriq.h@gmail.com"
+        }
+    ],
+    "autoload": {
+        "classmap" : [ "module/" ]
+    }
+}
