@@ -51,11 +51,17 @@ class VisualCeption extends \Codeception\Module
      */
     public function _before(\Codeception\TestCase $test)
     {
-        if (!$this->hasModule("WebDriver")) {
+        $webDriverModule = NULL;
+        foreach ($this->getModules() as $module) {
+            if ($module instanceof WebDriver) {
+                $webDriverModule = $module;
+            }
+        }
+        if (!$webDriverModule) {
             throw new \Exception("VisualCeption uses the WebDriver. Please be sure that this module is activated.");
         }
 
-        $this->webDriverModule = $this->getModule("WebDriver");
+        $this->webDriverModule = $webDriverModule;
         $this->webDriver = $this->webDriverModule->webDriver;
 
         $jQueryString = file_get_contents(__DIR__ . "/jquery.js");
