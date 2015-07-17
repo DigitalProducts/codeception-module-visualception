@@ -3,7 +3,7 @@ Visual regression tests integrated in [Codeception](http://codeception.com/).
 
 [![Build Status](https://travis-ci.org/DigitalProducts/codeception-module-visualception.svg?branch=master)](https://travis-ci.org/DigitalProducts/codeception-module-visualception)
 
-This module can be used to compare the current representation of a website element with an expeted. It was written on the shoulders of codeception and integrates in a very easy way.
+This module can be used to compare the current representation of a website element with an expected. It was written on the shoulders of codeception and integrates in a very easy way.
 
 **Example**
 
@@ -25,7 +25,7 @@ VisualCeption needs the following components to run:
 
 * **Codeception** VisualCeption is a module for [Codeception](http://codeception.com/). It will need a running version of this tool.
 * **Imagick** For comparing two images VisualCeption is using the imagick library for php. For more information visit [php.net](http://www.php.net/manual/de/book.imagick.php) or the [installation guide](http://www.php.net/manual/en/imagick.setup.php).
-* **WebDriver module** This tool does only work with the webdriver module in Codeception the moment.
+* **WebDriver module** This tool only works with the webdriver module in Codeception at the moment.
 
 ## Installation
 
@@ -59,7 +59,7 @@ VisualCeption:
 
 ## Usage
 
-VisualCeption is really easy to use. There are only two method that will be added to your WebGuy <code>seeVisualChanges</code> and <code>dontSeeVisualChanges</code>.
+VisualCeption is really easy to use. There are only two methods that will be added to your WebGuy <code>seeVisualChanges</code> and <code>dontSeeVisualChanges</code>.
 
 ```php
 $I->seeVisualChanges( "uniqueIdentifier1", "elementId1" );
