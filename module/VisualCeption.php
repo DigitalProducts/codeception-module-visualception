@@ -268,8 +268,8 @@ class VisualCeption extends \Codeception\Module
     {
         $caseName = str_replace('Cept.php', '', $this->test->getFileName());
 
-        $search = array('/', '\\');
-        $replace = array('.', '.');
+        $search = array('/', '\\', ':');
+        $replace = array('.', '.', '');
         $caseName = str_replace($search, $replace, $caseName);
 
         return $caseName . '.' . $identifier . '.png';
