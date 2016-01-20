@@ -263,7 +263,8 @@ class VisualCeption extends \Codeception\Module
         $replace = array('.', '.');
         $caseName = str_replace($search, $replace, $caseName);
 
-        return $caseName . '.' . $identifier . '.png';
+        // Why do we put the full path?????
+        return /*$caseName . '.' . */$identifier . '.png';
     }
 
     /**
