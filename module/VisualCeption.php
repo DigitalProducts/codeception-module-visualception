@@ -16,7 +16,7 @@ use Codeception\Module\ImageDeviationException;
  */
 class VisualCeption extends \Codeception\Module
 {
-    private $webDriverModuleName;
+    private $webDriverModuleName = "WebDriver";
     private $referenceImageDir;
 
     /**
