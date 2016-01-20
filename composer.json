@@ -1,5 +1,5 @@
 {
-  "name": "digital-products/codeception-visualception-wpbrowser",
+  "name": "digital-products-fork/codeception-visualception-wpbrowser",
   "description": "A module for Codeception to test visual changes on web pages (with WPBrowser suppport via a webdriver parameter on VisualCeption module)",
   "homepage": "https://github.com/DigitalProducts/codeception-module-visualception",
   "license": "Apache-2.0",
