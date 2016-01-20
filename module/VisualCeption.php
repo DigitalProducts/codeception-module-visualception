@@ -16,7 +16,7 @@ use Codeception\Module\ImageDeviationException;
  */
 class VisualCeption extends \Codeception\Module
 {
-    private $webDriverModule;
+    private $webDriverModuleName;
     private $referenceImageDir;
 
     /**
@@ -38,11 +38,11 @@ class VisualCeption extends \Codeception\Module
      */
     public function _before(\Codeception\TestCase $test)
     {
-        if (!$this->hasModule($this->webDriverModule)) {
-            throw new \Exception("VisualCeption uses the " . $this->webDriverModule . ". Please be sure that this module is activated.");
+        if (!$this->hasModule($this->webDriverModuleName)) {
+            throw new \Exception("VisualCeption uses the " . $this->webDriverModuleName . ". Please be sure that this module is activated.");
         }
 
-        $this->webDriverModule = $this->getModule($this->webDriverModule);
+        $this->webDriverModule = $this->getModule($this->webDriverModuleName);
         $this->webDriver = $this->webDriverModule->webDriver;
 
         $jQueryString = file_get_contents(__DIR__ . "/jquery.js");
