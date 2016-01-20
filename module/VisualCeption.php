@@ -182,10 +182,10 @@ class VisualCeption extends \Codeception\Module
      *
      * @throws \RuntimeException
      */
-    private function _initialize()
+    public function _initialize()
     {
         if (array_key_exists('webdriver', $this->config)) {
-            $this->webDriverModule = $this->config["webdriver"];
+            $this->webDriverModuleName = $this->config["webdriver"];
         }
 
         if (array_key_exists('maximumDeviation', $this->config)) {

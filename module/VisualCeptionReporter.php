@@ -14,7 +14,7 @@ class VisualCeptionReporter extends \Codeception\Module
 
     private $referenceImageDir;
 
-    private function _initialize()
+    public function _initialize()
     {
         $this->debug("Initializing VisualCeptionReport");
 
