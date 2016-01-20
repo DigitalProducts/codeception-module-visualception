@@ -16,7 +16,7 @@ use Codeception\Module\ImageDeviationException;
  */
 class VisualCeption extends \Codeception\Module
 {
-
+    private $webDriverModule;
     private $referenceImageDir;
 
     /**
@@ -31,19 +31,6 @@ class VisualCeption extends \Codeception\Module
     private $webDriverModule = null;
 
     /**
-     * Create an object from VisualCeption Class
-     *
-     * @param array $config
-     * @return result
-     */
-    public function __construct($config)
-    {
-        $result = parent::__construct($config);
-        $this->init();
-        return $result;
-    }
-
-    /**
      * Event hook before a test starts
      *
      * @param \Codeception\TestCase $test
@@ -51,11 +38,11 @@ class VisualCeption extends \Codeception\Module
      */
     public function _before(\Codeception\TestCase $test)
     {
-        if (!$this->hasModule("WebDriver")) {
-            throw new \Exception("VisualCeption uses the WebDriver. Please be sure that this module is activated.");
+        if (!$this->hasModule($this->webDriverModule)) {
+            throw new \Exception("VisualCeption uses the " . $this->webDriverModule . ". Please be sure that this module is activated.");
         }
 
-        $this->webDriverModule = $this->getModule("WebDriver");
+        $this->webDriverModule = $this->getModule($this->webDriverModule);
         $this->webDriver = $this->webDriverModule->webDriver;
 
         $jQueryString = file_get_contents(__DIR__ . "/jquery.js");
@@ -195,8 +182,12 @@ class VisualCeption extends \Codeception\Module
      *
      * @throws \RuntimeException
      */
-    private function init()
+    private function _initialize()
     {
+        if (array_key_exists('webdriver', $this->config)) {
+            $this->webDriverModule = $this->config["webdriver"];
+        }
+
         if (array_key_exists('maximumDeviation', $this->config)) {
             $this->maximumDeviation = $this->config["maximumDeviation"];
         }

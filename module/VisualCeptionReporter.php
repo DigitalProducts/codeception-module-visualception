@@ -14,14 +14,7 @@ class VisualCeptionReporter extends \Codeception\Module
 
     private $referenceImageDir;
 
-    public function __construct($config)
-    {
-        $result = parent::__construct($config);
-        $this->init();
-        return $result;
-    }
-
-    private function init()
+    private function _initialize()
     {
         $this->debug("Initializing VisualCeptionReport");
 
