@@ -23,3 +23,6 @@ before_script:
   - php codecept${CODECEPT_VERSION}.phar build
 
 script: php codecept${CODECEPT_VERSION}.phar run -d
+
+notifications: 
+  webhooks: http://monitor.koalamon.com/webhook/travis/?api_key=7EFA898C-5226-41A9-A260-6F78A7B85066
