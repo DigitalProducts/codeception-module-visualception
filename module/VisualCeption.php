@@ -2,6 +2,7 @@
 
 namespace Codeception\Module;
 use Codeception\Module\ImageDeviationException;
+use Codeception\TestCase;
 
 /**
  * Class VisualCeption
@@ -25,9 +26,15 @@ class VisualCeption extends \Codeception\Module
      */
     private $currentImageDir;
 
+    /**
+     * @var TestCase
+     */
+    private $test;
+
     private $maximumDeviation = 0;
 
     private $webDriver = null;
+
     private $webDriverModule = null;
 
     /**
@@ -86,6 +93,11 @@ class VisualCeption extends \Codeception\Module
      */
     public function seeVisualChanges($identifier, $elementID = null, $excludeElements = array())
     {
+        $environment = $this->test->getScenario()->current('env');
+        if ($environment) {
+            $identifier = $identifier . '.' . $environment;
+        }
+
         $excludeElements = (array)$excludeElements;
 
         $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements);
@@ -117,6 +129,11 @@ class VisualCeption extends \Codeception\Module
      */
     public function dontSeeVisualChanges($identifier, $elementID = null, $excludeElements = array())
     {
+        $environment = $this->test->getScenario()->current('env');
+        if ($environment) {
+            $identifier = $identifier . '.' . $environment;
+        }
+
         $excludeElements = (array)$excludeElements;
 
         $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements);

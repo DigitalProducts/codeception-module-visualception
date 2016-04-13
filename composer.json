@@ -1,16 +1,20 @@
 {
-    "name": "nubium/visualception",
-    "description": "Compare current website with its expected visual representation.",
-    "require": {
-        "codeception/codeception": "~2.1"
+  "name": "nubium/visualception",
+  "description": "Compare current website with its expected visual representation.",
+  "require": {
+    "codeception/codeception": "~2.1"
+  },
+  "authors": [
+    {
+      "name": "Ondrej Hatala",
+      "email": "ondriq.h@gmail.com"
     },
-    "authors": [
-        {
-            "name": "Ondrej Hatala",
-            "email": "ondriq.h@gmail.com"
-        }
-    ],
-    "autoload": {
-        "classmap" : [ "module/" ]
+    {
+      "name": "Jiri Travnicek",
+      "email": "jiri.travnicek@outlook.com"
     }
+  ],
+  "autoload": {
+    "classmap" : [ "module/" ]
+  }
 }
