@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 5.3
   - 5.4
   - 5.5
 
@@ -10,19 +9,16 @@ env:
  - CODECEPT_VERSION="2"
  - CODECEPT_VERSION="2.2"
 
-matrix:
-  exclude:
-    - php: 5.3
-      env: CODECEPT_VERSION="2"
-    -php: 5.3
-      env: CODECEPT_VERSION="2.2"
-
 before_script:
   - printf "\n" | pecl install imagick
   - wget http://selenium-release.storage.googleapis.com/2.41/selenium-server-standalone-2.41.0.jar
+  - echo "extension = imagick.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - java -jar selenium-server-standalone-2.41.0.jar -port 4444 >/dev/null 2>&1 &
   - cd test/integration/
   - mkdir tests/_log
   - php codecept${CODECEPT_VERSION}.phar build
 
 script: php codecept${CODECEPT_VERSION}.phar run -d
+
+notifications: 
+  webhooks: http://monitor.koalamon.com/webhook/travis/?api_key=7EFA898C-5226-41A9-A260-6F78A7B85066
