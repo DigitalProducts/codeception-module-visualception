@@ -33,10 +33,10 @@ class VisualCeption extends \Codeception\Module
     /**
      * Event hook before a test starts
      *
-     * @param \Codeception\TestCase $test
+     * @param \Codeception\TestInterface $test
      * @throws \Exception
      */
-    public function _before(\Codeception\TestCase $test)
+    public function _before(\Codeception\TestInterface $test)
     {
         if (!$this->hasModule($this->webDriverModuleName)) {
             throw new \Exception("VisualCeption uses the " . $this->webDriverModuleName . ". Please be sure that this module is activated.");

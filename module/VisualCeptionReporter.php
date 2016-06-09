@@ -62,7 +62,7 @@ class VisualCeptionReporter extends \Codeception\Module
         file_put_contents($this->logFile, $reportContent);
     }
 
-    public function _failed(\Codeception\TestCase $test, $fail)
+    public function _failed(\Codeception\TestInterface $test, $fail)
     {
         if ($fail instanceof ImageDeviationException) {
             $this->failed[] = $fail;
