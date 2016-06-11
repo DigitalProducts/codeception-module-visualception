@@ -12,27 +12,20 @@ use WebDriverBy;
 
 /**
  * Class VisualCeption
- *
- * @copyright Copyright (c) 2014 G+J Digital Products GmbH
- * @license MIT license, http://www.opensource.org/licenses/mit-license.php
  * @package Codeception\Module
- *
- * @author Nils Langner <langner.nils@guj.de>
- * @author Torsten Franz
- * @author Sebastian Neubert
  */
 class VisualCeption extends Module
 {
     /**
      * @var string
      */
-    private $referenceImageDir;
+    private $referenceDirectory;
 
     /**
      * This var represents the directory where the taken images are stored
      * @var string
      */
-    private $currentImageDir;
+    private $screenshotDirectory;
 
     /**
      * Codeception TestCase
@@ -57,9 +50,6 @@ class VisualCeption extends Module
     private $webDriverModule;
 
 
-    private $saveCurrentImageIfFailure;
-
-
     /**
      * Initialize the module and read the config.
      * Throws a runtime exception, if the
@@ -74,24 +64,20 @@ class VisualCeption extends Module
             $this->maximumDeviation = $this->config['maximumDeviation'];
         }
 
-        if (array_key_exists('saveCurrentImageIfFailure', $this->config)) {
-            $this->saveCurrentImageIfFailure = (boolean)$this->config['saveCurrentImageIfFailure'];
-        }
-
-        if (array_key_exists('referenceImageDir', $this->config)) {
-            $this->referenceImageDir = $this->config['referenceImageDir'];
+        if (array_key_exists('referenceDirectory', $this->config)) {
+            $this->referenceDirectory = $this->config['referenceDirectory'];
         } else {
-            $this->referenceImageDir = Configuration::dataDir() . 'VisualCeption/';
+            $this->referenceDirectory = Configuration::dataDir() . 'VisualCeption/';
         }
 
-        if (!is_dir($this->referenceImageDir) && !@mkdir($this->referenceImageDir, 0777, true)) {
+        if (!is_dir($this->referenceDirectory) && !@mkdir($this->referenceDirectory, 0777, true)) {
             throw new \InvalidElementStateException('Unable to create screenshot directory');
         }
 
         if (array_key_exists('currentImageDir', $this->config)) {
-            $this->currentImageDir = $this->config['currentImageDir'];
+            $this->screenshotDirectory = $this->config['currentImageDir'];
         } else {
-            $this->currentImageDir = Configuration::logDir() . 'debug/tmp/';
+            $this->screenshotDirectory = Configuration::logDir() . 'debug/tmp/';
         }
     }
 
@@ -121,9 +107,9 @@ class VisualCeption extends Module
     }
 
 
-    public function getReferenceImageDir()
+    public function getReferenceDirectory()
     {
-        return $this->referenceImageDir;
+        return $this->referenceDirectory;
     }
 
 
@@ -135,7 +121,7 @@ class VisualCeption extends Module
      * @param string $elementID DOM ID of the element, which should be screenshotted
      * @throws \Codeception\Module\ImageDeviationException
      */
-    public function seeVisualChanges($identifier, $elementID = null)
+    public function seeVisualChanges($identifier, $elementID = 'body')
     {
         $environment = $this->test->getScenario()->current('env');
         if ($environment) {
@@ -174,7 +160,7 @@ class VisualCeption extends Module
      * @param string $elementID DOM ID of the element, which should be screenshotted
      * @throws \Codeception\Module\ImageDeviationException
      */
-    public function dontSeeVisualChanges($identifier, $elementID = null)
+    public function dontSeeVisualChanges($identifier, $elementID = 'body')
     {
         $environment = $this->test->getScenario()->current('env');
         if ($environment) {
@@ -193,7 +179,7 @@ class VisualCeption extends Module
                 $deviationResult['deviationImage']->writeImage($compareScreenshotPath);
 
                 throw new ImageDeviationException(
-                    'The deviation of the taken screenshot is too low (' . $deviationResult['deviation'] . '%).'
+                    'The deviation of the taken screenshot is too high (' . $deviationResult['deviation'] . '%).'
                     . PHP_EOL
                     . 'See ' . $compareScreenshotPath . ' for a deviation screenshot.',
                     $this->getExpectedScreenshotPath($identifier),
@@ -287,7 +273,7 @@ class VisualCeption extends Module
      */
     private function getScreenshotPath($identifier)
     {
-        $debugDir = $this->currentImageDir;
+        $debugDir = $this->screenshotDirectory;
         if (!is_dir($debugDir)) {
             $created = mkdir($debugDir, 0777, true);
             if ($created) {
@@ -308,7 +294,7 @@ class VisualCeption extends Module
      */
     private function getExpectedScreenshotPath($identifier)
     {
-        return $this->referenceImageDir . $this->getScreenshotName($identifier);
+        return $this->referenceDirectory . $this->getScreenshotName($identifier);
     }
 
 

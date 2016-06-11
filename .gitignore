@@ -3,3 +3,7 @@
 .settings/
 
 /vendor/
+
+tests/_output/*
+tests/_support/*Tester.php
+tests/_support/_generated
