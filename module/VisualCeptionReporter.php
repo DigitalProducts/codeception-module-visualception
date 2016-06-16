@@ -1,10 +1,11 @@
 <?php
-/**
- *
- */
 
 namespace Codeception\Module;
 
+/**
+ * Class VisualCeptionReporter
+ * @package Codeception\Module
+ */
 class VisualCeptionReporter extends \Codeception\Module
 {
     private $failed = array();
@@ -14,43 +15,36 @@ class VisualCeptionReporter extends \Codeception\Module
 
     private $referenceImageDir;
 
-    public function __construct($config)
+    public function _initialize()
     {
-        $result = parent::__construct($config);
-        $this->init();
-        return $result;
-    }
-
-    private function init()
-    {
-        $this->debug("Initializing VisualCeptionReport");
+        $this->debug('Initializing VisualCeptionReport');
 
         if (array_key_exists('logFile', $this->config)) {
-            $this->logFile = $this->config["logFile"];
+            $this->logFile = $this->config['logFile'];
         }else{
             $this->logFile = \Codeception\Configuration::logDir() . 'vcresult.html';
         }
 
         if (array_key_exists('templateVars', $this->config)) {
-            $this->templateVars = $this->config["templateVars"];
+            $this->templateVars = $this->config['templateVars'];
         }
 
         if (array_key_exists('templateFile', $this->config)) {
-            $this->templateFile = $this->config["templateFile"];
+            $this->templateFile = $this->config['templateFile'];
         } else {
-            $this->templateFile = __DIR__ . "/report/template.php";
+            $this->templateFile = __DIR__ . '/report/template.php';
         }
     }
 
-    public function _beforeSuite()
+    public function _beforeSuite($settings = [])
     {
-        if (!$this->hasModule("VisualCeption")) {
-            throw new \Exception("VisualCeptionReporter uses VisualCeption. Please be sure that this module is activated.");
+        if (!$this->hasModule('VisualCeption')) {
+            throw new \Exception('VisualCeptionReporter uses VisualCeption. Please be sure that this module is activated.');
         }
 
-        $this->referenceImageDir = $this->getModule("VisualCeption")->getReferenceImageDir();
+        $this->referenceImageDir = $this->getModule('VisualCeption')->getReferenceDirectory();
 
-        $this->debug( "VisualCeptionReporter: templateFile = " . $this->templateFile );
+        $this->debug( 'VisualCeptionReporter: templateFile = ' . $this->templateFile );
     }
 
     public function _afterSuite()
@@ -65,7 +59,7 @@ class VisualCeptionReporter extends \Codeception\Module
         $reportContent = ob_get_contents();
         ob_clean();
 
-        $this->debug("Trying to store file (".$this->logFile.")");
+        $this->debug('Trying to store file (' .$this->logFile. ')');
         file_put_contents($this->logFile, $reportContent);
     }
 
