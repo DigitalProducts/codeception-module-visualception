@@ -35,7 +35,7 @@ class VisualCeptionReporter extends \Codeception\Module
         }
     }
 
-    public function _beforeSuite()
+    public function _beforeSuite($settings = array())
     {
         if (!$this->hasModule("VisualCeption")) {
             throw new \Exception("VisualCeptionReporter uses VisualCeption. Please be sure that this module is activated.");
