@@ -52,6 +52,11 @@ class VisualCeption extends \Codeception\Module
         $this->test = $test;
     }
 
+    public function _after(\Codeception\TestInterface $test)
+    {
+        $this->test = null;
+    }
+
     public function getReferenceImageDir()
     {
         return $this->referenceImageDir;
@@ -81,6 +86,7 @@ class VisualCeption extends \Codeception\Module
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
 
                 throw new ImageDeviationException("The deviation of the taken screenshot is too low (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.",
+                    $this->test,
                     $this->getExpectedScreenshotPath($identifier),
                     $this->getScreenshotPath($identifier),
                     $compareScreenshotPath);
@@ -112,6 +118,7 @@ class VisualCeption extends \Codeception\Module
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
 
                 throw new ImageDeviationException("The deviation of the taken screenshot is too hight (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.",
+                    $this->test,
                     $this->getExpectedScreenshotPath($identifier),
                     $this->getScreenshotPath($identifier),
                     $compareScreenshotPath);
