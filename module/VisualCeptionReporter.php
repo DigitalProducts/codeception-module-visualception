@@ -54,7 +54,7 @@ class VisualCeptionReporter extends \Codeception\Module
         $i = 0;
 
         ob_start();
-        include_once $this->templateFile;
+        include $this->templateFile;
         $reportContent = ob_get_contents();
         ob_clean();
 
