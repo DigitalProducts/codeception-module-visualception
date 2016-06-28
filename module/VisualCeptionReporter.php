@@ -14,14 +14,7 @@ class VisualCeptionReporter extends \Codeception\Module
 
     private $referenceImageDir;
 
-    public function __construct($config)
-    {
-        $result = parent::__construct($config);
-        $this->init();
-        return $result;
-    }
-
-    private function init()
+    public function _initialize()
     {
         $this->debug("Initializing VisualCeptionReport");
 
@@ -42,7 +35,7 @@ class VisualCeptionReporter extends \Codeception\Module
         }
     }
 
-    public function _beforeSuite()
+    public function _beforeSuite($settings = array())
     {
         if (!$this->hasModule("VisualCeption")) {
             throw new \Exception("VisualCeptionReporter uses VisualCeption. Please be sure that this module is activated.");
@@ -61,7 +54,7 @@ class VisualCeptionReporter extends \Codeception\Module
         $i = 0;
 
         ob_start();
-        include_once $this->templateFile;
+        include $this->templateFile;
         $reportContent = ob_get_contents();
         ob_clean();
 
@@ -69,7 +62,7 @@ class VisualCeptionReporter extends \Codeception\Module
         file_put_contents($this->logFile, $reportContent);
     }
 
-    public function _failed(\Codeception\TestCase $test, $fail)
+    public function _failed(\Codeception\TestInterface $test, $fail)
     {
         if ($fail instanceof ImageDeviationException) {
             $this->failed[] = $fail;

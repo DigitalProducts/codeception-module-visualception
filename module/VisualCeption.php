@@ -16,7 +16,8 @@ use Codeception\Module\ImageDeviationException;
  */
 class VisualCeption extends \Codeception\Module
 {
-
+    private $webDriverModuleName = "WebDriver";
+    private $fullPageScreenshot = false;
     private $referenceImageDir;
 
     /**
@@ -31,31 +32,18 @@ class VisualCeption extends \Codeception\Module
     private $webDriverModule = null;
 
     /**
-     * Create an object from VisualCeption Class
-     *
-     * @param array $config
-     * @return result
-     */
-    public function __construct($config)
-    {
-        $result = parent::__construct($config);
-        $this->init();
-        return $result;
-    }
-
-    /**
      * Event hook before a test starts
      *
-     * @param \Codeception\TestCase $test
+     * @param \Codeception\TestInterface $test
      * @throws \Exception
      */
-    public function _before(\Codeception\TestCase $test)
+    public function _before(\Codeception\TestInterface $test)
     {
-        if (!$this->hasModule("WebDriver")) {
-            throw new \Exception("VisualCeption uses the WebDriver. Please be sure that this module is activated.");
+        if (!$this->hasModule($this->webDriverModuleName)) {
+            throw new \Exception("VisualCeption uses the " . $this->webDriverModuleName . ". Please be sure that this module is activated.");
         }
 
-        $this->webDriverModule = $this->getModule("WebDriver");
+        $this->webDriverModule = $this->getModule($this->webDriverModuleName);
         $this->webDriver = $this->webDriverModule->webDriver;
 
         $jQueryString = file_get_contents(__DIR__ . "/jquery.js");
@@ -63,6 +51,11 @@ class VisualCeption extends \Codeception\Module
         $this->webDriver->executeScript('jQuery.noConflict();');
 
         $this->test = $test;
+    }
+
+    public function _after(\Codeception\TestInterface $test)
+    {
+        $this->test = null;
     }
 
     public function getReferenceImageDir()
@@ -77,12 +70,14 @@ class VisualCeption extends \Codeception\Module
      * @param string $identifier Identifies your test object
      * @param string $elementID DOM ID of the element, which should be screenshotted
      * @param string|array $excludeElements Element name or array of Element names, which should not appear in the screenshot
+     * @param string|array $removeElements Element name or array of Element names, which should not be incuded in the layout of the page
      */
-    public function seeVisualChanges($identifier, $elementID = null, $excludeElements = array())
+    public function seeVisualChanges($identifier, $elementID = null, $hideElements = array(), $removeElements = array())
     {
         $excludeElements = (array)$excludeElements;
+        $removeElements = (array)$removeElements;
 
-        $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements);
+        $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements, $removeElements);
 
         if (!is_null($deviationResult["deviationImage"])) {
 
@@ -94,6 +89,7 @@ class VisualCeption extends \Codeception\Module
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
 
                 throw new ImageDeviationException("The deviation of the taken screenshot is too low (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.",
+                    $this->test,
                     $this->getExpectedScreenshotPath($identifier),
                     $this->getScreenshotPath($identifier),
                     $compareScreenshotPath);
@@ -108,12 +104,14 @@ class VisualCeption extends \Codeception\Module
      * @param string $identifier identifies your test object
      * @param string $elementID DOM ID of the element, which should be screenshotted
      * @param string|array $excludeElements string of Element name or array of Element names, which should not appear in the screenshot
+     * @param string|array $removeElements Element name or array of Element names, which should not be incuded in the layout of the page
      */
-    public function dontSeeVisualChanges($identifier, $elementID = null, $excludeElements = array())
+    public function dontSeeVisualChanges($identifier, $elementID = null, $excludeElements = array(), $removeElements = array())
     {
         $excludeElements = (array)$excludeElements;
+        $removeElements = (array)$removeElements;
 
-        $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements);
+        $deviationResult = $this->getDeviation($identifier, $elementID, $excludeElements, $removeElements);
 
         if (!is_null($deviationResult["deviationImage"])) {
 
@@ -125,6 +123,7 @@ class VisualCeption extends \Codeception\Module
                 $deviationResult["deviationImage"]->writeImage($compareScreenshotPath);
 
                 throw new ImageDeviationException("The deviation of the taken screenshot is too hight (" . $deviationResult["deviation"] . "%).\nSee $compareScreenshotPath for a deviation screenshot.",
+                    $this->test,
                     $this->getExpectedScreenshotPath($identifier),
                     $this->getScreenshotPath($identifier),
                     $compareScreenshotPath);
@@ -163,6 +162,36 @@ class VisualCeption extends \Codeception\Module
     }
 
     /**
+     * Remove an element from the layout by setting display to none
+     *
+     * @param $elementSelector String of jQuery Element selector, set display to none
+     */
+    private function removeElement($elementSelector)
+    {
+        $this->webDriver->executeScript('
+            if( jQuery("' . $elementSelector . '").length > 0 ) {
+                jQuery( "' . $elementSelector . '" ).css("display","none");
+            }
+        ');
+        $this->debug("set display of element '$elementSelector' to 'none'");
+    }
+
+    /**
+     * Put back an element in the layout
+     *
+     * @param $elementSelector String of jQuery Element selector, remove display CSS
+     */
+    private function putBackElement($elementSelector)
+    {
+        $this->webDriver->executeScript('
+            if( jQuery("' . $elementSelector . '").length > 0 ) {
+                jQuery( "' . $elementSelector . '" ).css("display","");
+            }
+        ');
+        $this->debug("removed display override of element '$elementSelector'");
+    }
+
+    /**
      * Compares the two images and calculate the deviation between expected and actual image
      *
      * @param string $identifier Identifies your test object
@@ -170,10 +199,10 @@ class VisualCeption extends \Codeception\Module
      * @param array $excludeElements Element names, which should not appear in the screenshot
      * @return array Includes the calculation of deviation in percent and the diff-image
      */
-    private function getDeviation($identifier, $elementID, array $excludeElements = array())
+    private function getDeviation($identifier, $elementID, array $excludeElements = array(), array $removeElements = arRay())
     {
         $coords = $this->getCoordinates($elementID);
-        $this->createScreenshot($identifier, $coords, $excludeElements);
+        $this->createScreenshot($identifier, $coords, $excludeElements, $removeElements);
 
         $compareResult = $this->compare($identifier);
 
@@ -195,8 +224,16 @@ class VisualCeption extends \Codeception\Module
      *
      * @throws \RuntimeException
      */
-    private function init()
+    public function _initialize()
     {
+        if (array_key_exists('webdriver', $this->config)) {
+            $this->webDriverModuleName = $this->config["webdriver"];
+        }
+
+        if (array_key_exists('fullPage', $this->config)) {
+            $this->fullPageScreenshot = $this->config["fullPage"];
+        }
+
         if (array_key_exists('maximumDeviation', $this->config)) {
             $this->maximumDeviation = $this->config["maximumDeviation"];
         }
@@ -272,7 +309,8 @@ class VisualCeption extends \Codeception\Module
         $replace = array('.', '.');
         $caseName = str_replace($search, $replace, $caseName);
 
-        return $caseName . '.' . $identifier . '.png';
+        // Why do we put the full path?????
+        return /*$caseName . '.' . */$identifier . '.png';
     }
 
     /**
@@ -314,9 +352,10 @@ class VisualCeption extends \Codeception\Module
      * @param string $identifier identifies your test object
      * @param array $coords Coordinates where the DOM element is located
      * @param array $excludeElements List of elements, which should not appear in the screenshot
+     * @param array $removeElements List of elements, which should not be included in the layout
      * @return string Path of the current screenshot image
      */
-    private function createScreenshot($identifier, array $coords, array $excludeElements = array())
+    private function createScreenshot($identifier, array $coords, array $excludeElements = array(), array $removeElements = array())
     {
         $screenShotDir = \Codeception\Configuration::logDir() . 'debug/';
 
@@ -327,12 +366,17 @@ class VisualCeption extends \Codeception\Module
         $elementPath = $this->getScreenshotPath($identifier);
 
         $this->hideElementsForScreenshot($excludeElements);
+        $this->removeElementsForLayout($removeElements);
         $this->webDriver->takeScreenshot($screenshotPath);
         $this->resetHideElementsForScreenshot($excludeElements);
+        $this->resetRemoveElementsForLayout($removeElements);
 
         $screenShotImage = new \Imagick();
         $screenShotImage->readImage($screenshotPath);
-        $screenShotImage->cropImage($coords['width'], $coords['height'], $coords['offset_x'], $coords['offset_y']);
+
+        if(!$this->fullPageScreenshot) {
+            $screenShotImage->cropImage($coords['width'], $coords['height'], $coords['offset_x'], $coords['offset_y']);
+        }
         $screenShotImage->writeImage($elementPath);
 
         unlink($screenshotPath);
@@ -362,6 +406,31 @@ class VisualCeption extends \Codeception\Module
     {
         foreach ($excludeElements as $element) {
             $this->showElement($element);
+        }
+        $this->webDriverModule->wait(1);
+    }
+    /**
+     * Remove the given elements with CSS display = none. Wait a second after hiding
+     *
+     * @param array $removeElements Array of strings, which should be not included in layout
+     */
+    private function removeElementsForLAYOUT(array $removeElements)
+    {
+        foreach ($removeElements as $element) {
+            $this->removeElement($element);
+        }
+        $this->webDriverModule->wait(1);
+    }
+
+    /**
+     * Reset removing the given elements with CSS display. Wait a second after reset display
+     *
+     * @param array $excludeElements array of strings, which should be included again
+     */
+    private function resetRemoveElementsForLayout(array $removeElements)
+    {
+        foreach ($removeElements as $element) {
+            $this->putBackElement($element);
         }
         $this->webDriverModule->wait(1);
     }
