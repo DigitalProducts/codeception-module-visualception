@@ -17,6 +17,7 @@ use Codeception\Module\ImageDeviationException;
 class VisualCeption extends \Codeception\Module
 {
     private $webDriverModuleName = "WebDriver";
+    private $fullPageScreenshot = false;
     private $referenceImageDir;
 
     /**
@@ -229,6 +230,10 @@ class VisualCeption extends \Codeception\Module
             $this->webDriverModuleName = $this->config["webdriver"];
         }
 
+        if (array_key_exists('fullPage', $this->config)) {
+            $this->fullPageScreenshot = $this->config["fullPage"];
+        }
+
         if (array_key_exists('maximumDeviation', $this->config)) {
             $this->maximumDeviation = $this->config["maximumDeviation"];
         }
@@ -368,7 +373,10 @@ class VisualCeption extends \Codeception\Module
 
         $screenShotImage = new \Imagick();
         $screenShotImage->readImage($screenshotPath);
-        $screenShotImage->cropImage($coords['width'], $coords['height'], $coords['offset_x'], $coords['offset_y']);
+
+        if(!$this->fullPageScreenshot) {
+            $screenShotImage->cropImage($coords['width'], $coords['height'], $coords['offset_x'], $coords['offset_y']);
+        }
         $screenShotImage->writeImage($elementPath);
 
         unlink($screenshotPath);
