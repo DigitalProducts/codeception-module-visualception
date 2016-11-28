@@ -1,0 +1,12 @@
+{
+  "name": "digital-products/codeception-visualception",
+  "description": "A module for Codeception to test visual changes on web pages",  
+  "homepage": "https://github.com/DigitalProducts/codeception-module-visualception",
+  "license": "Apache-2.0",
+  "require": {
+    "php": ">=5.3.0"
+  },
+  "autoload": {
+    "classmap": ["module/"]
+  }
+}
