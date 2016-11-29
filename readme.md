@@ -1,3 +1,10 @@
+## DEPRECATED
+This repository is deprecated. Please use the new master provided by codeception.
+
+[Codeception/VisualCeption](https://github.com/Codeception/VisualCeption)
+
+
+
 # VisualCeption
 Visual regression tests integrated in [Codeception](http://codeception.com/).
 
